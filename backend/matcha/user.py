@@ -36,11 +36,11 @@ def login():
 @bp.route('/register', methods=('POST', 'DELETE'))
 def register():
     content = request.json
-    user_name = content['user_name']
+    user_name = content['username']
     password = content['password']
     email = content['email']
-    last_name = content['last_name']
-    first_name = content['first_name']
+    last_name = content['lastname']
+    first_name = content['firstname']
 
     app.logger.info(f'user_name - {user_name}')
     app.logger.info(f'password - {password}')
