@@ -4,6 +4,7 @@ from sqlalchemy import text
 
 from .db import get_engine
 from .db_methods import register_user, get_user_id, update_profile
+from backend.matcha.classes.user import User, Login
 
 bp = Blueprint('user', __name__, url_prefix='/user')
 
@@ -11,22 +12,11 @@ bp = Blueprint('user', __name__, url_prefix='/user')
 @bp.route('', methods=('POST',))
 def login():
     if request.method == 'POST':
-        content = request.json
-        user_name = content['user_name']
-        password = content['password']
+        result = User.login(request.json)
 
-        app.logger.info(f'username - {user_name}')
-        app.logger.info(f'password - {password}')
-        engine = get_engine()
-
-        user = engine.execute(
-            text('SELECT * FROM Users WHERE user_name = :u'),
-            u=user_name
-        ).fetchone()
-
-        if user is None:
+        if result == Login.INCORRECT_USER:
             return {'message': 'Incorrect user_name'}, 400
-        elif not check_password_hash(user['password'], password):
+        elif request == Login.INCORRECT_PASS:
             return {'message': 'Incorrect password'}, 400
 
         return {'message': 'Successful login'}, 200

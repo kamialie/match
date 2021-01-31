@@ -1,8 +1,12 @@
 from sqlalchemy import text
 from werkzeug.security import generate_password_hash
 
+from backend.matcha.db import get_engine
 
-def get_user_id(engine, user_name):
+
+def get_user_id(user_name):
+    engine = get_engine()
+
     result = engine.execute(
         text('SELECT user_id FROM Users WHERE user_name = :u'),
         u=user_name
@@ -11,6 +15,16 @@ def get_user_id(engine, user_name):
     if result is not None:
         return result['user_id']
 
+
+def get_user(user_name):
+    engine = get_engine()
+
+    result = engine.execute(
+        text('SELECT * FROM Users WHERE user_name = :u'),
+        u=user_name
+    ).fetchone()
+
+    return result
 
 def register_user(engine, user_name, password, first_name, last_name, email):
     engine.execute(
