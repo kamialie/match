@@ -5,7 +5,7 @@ import {fetchWrapper} from './fetchWrapper';
 import {history} from '../helpers/history';
 
 const userSubject = new BehaviorSubject(null);
-const baseUrl = `${config.host}/accounts`;
+const baseUrl = `${config.host}/user`;
 
 export const accountService = {
     login,
@@ -17,6 +17,7 @@ export const accountService = {
     resetPassword,
     update,
     delete: _delete,
+    updateAvatar,
     user: userSubject.asObservable(),
     get userValue() {
         return userSubject.value;
@@ -24,18 +25,17 @@ export const accountService = {
 };
 
 function login(username, password) {
-    return Promise.resolve({
-        firstName: 'Kamil',
-        lastName: 'Aliev',
-        email: 'test@mail.ru',
-        jwtToken: generateJwtToken({id: 1})
-    })//fetchWrapper.post(`${baseUrl}/login`, {username, password})
-        .then((user) => {
-            // publish user to subscribers and start timer to refresh token
-            userSubject.next(user);
-            startRefreshTokenTimer();
-            return user;
-        });
+    // return fetchWrapper.post(`${baseUrl}/login`, {username, password})
+    //     .then((user) => {
+    //         // publish user to subscribers and start timer to refresh token
+    //         userSubject.next(user);
+    //         startRefreshTokenTimer();
+    //         return user;
+    //     });
+    userSubject.next({
+
+    });
+    return Promise.resolve();
 }
 
 function logout() {
@@ -66,7 +66,7 @@ function generateJwtToken(user) {
 }
 
 function register(params) {
-    return Promise.resolve(); //fetchWrapper.post(`${baseUrl}/register`, params);
+    return fetchWrapper.post(`${baseUrl}/register`, params);
 }
 
 function forgotPassword(email) {
@@ -103,6 +103,10 @@ function _delete(id) {
             }
             return x;
         });
+}
+
+function updateAvatar() {
+
 }
 
 let refreshTokenTimeout;

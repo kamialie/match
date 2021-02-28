@@ -1,0 +1,13 @@
+@import "avatar/avatar.css";
+
+.profile {
+    display: flex;
+}
+
+.profile-title {
+    margin-bottom: 20px;
+}
+
+.profile-main-info {
+    margin-left: 30px;
+}

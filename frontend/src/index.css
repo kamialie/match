@@ -1,4 +1,11 @@
-a { cursor: pointer; }
+@import "Components/profile/details.css";
+@import "Components/dropzone/dropzone.css";
+@import "Components/mymap/mymap.css";
+@import "Components/tooltip/tooltip.css";
+
+a, button {
+    cursor: pointer;
+}
 
 .app-container {
     min-height: 320px;

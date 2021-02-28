@@ -1,3 +1,3 @@
 export default {
-    host: 'http://localhost:3000'
+    host: 'http://52.58.176.208:5000'
 };

@@ -26,7 +26,7 @@ module.exports = (/* env, options */) => ({
     devServer: {
         historyApiFallback: true
     },
-    devtool: isDevMode ? 'source-map' : false,
+    devtool: isDevMode ? 'source-mymap' : false,
     resolve: {
         extensions: ['.js']
     },

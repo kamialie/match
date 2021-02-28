@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {
     Route, Switch, Redirect, useLocation
 } from 'react-router-dom';
+import {YMaps} from 'react-yandex-maps';
 
 import {accountService} from './services/account.service';
 import {Account} from './Components/account';
@@ -22,17 +23,19 @@ function App() {
     }, []);
 
     return (
-        <div className={`app-container${user && ' bg-light'}`}>
-            <Alert />
-            <Nav />
-            <Switch>
-                <Redirect from='/:url*(/+)' to={pathname.slice(0, -1)} />
-                <PrivateRoute exact path='/' component={Home} />
-                <PrivateRoute path='/profile' component={Profile} />
-                <Route path='/account' component={Account} />
-                <Redirect from='*' to='/' />
-            </Switch>
-        </div>
+        <YMaps>
+            <div className={`app-container${user && ' bg-light'}`}>
+                <Alert />
+                <Nav />
+                <Switch>
+                    <Redirect from='/:url*(/+)' to={pathname.slice(0, -1)} />
+                    <PrivateRoute exact path='/' component={Home} />
+                    <PrivateRoute path='/profile' component={Profile} />
+                    <Route path='/account' component={Account} />
+                    <Redirect from='*' to='/' />
+                </Switch>
+            </div>
+        </YMaps>
     );
 }
 
