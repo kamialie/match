@@ -6,7 +6,7 @@ from flask.cli import with_appcontext
 
 from sqlalchemy import create_engine, text
 
-from .db_methods import register_user, get_user_id, update_profile
+from matcha.db_methods import register_user, get_user_id, update_profile
 
 #from sqlalchemy_utils import functions
 

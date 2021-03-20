@@ -4,7 +4,7 @@ from sqlalchemy import text
 
 from .db import get_engine
 from .db_methods import register_user, get_user_id, update_profile
-from backend.matcha.classes.user import User, Login
+#from matcha.classes.user import User, Login
 
 bp = Blueprint('user', __name__, url_prefix='/user')
 

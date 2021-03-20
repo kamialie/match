@@ -2,11 +2,11 @@ version: "3.8"
 
 services:
   backend:
+    depends_on:
+      - db
     networks:
       - backend
       - frontend
-    depends_on:
-      - db
 
   frontend:
     networks:
@@ -16,12 +16,12 @@ services:
     tty: true
 
   db:
-    networks:
-      - backend
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
       POSTGRES_DB: matcha
+    networks:
+      - backend
     restart: always
 
 networks:

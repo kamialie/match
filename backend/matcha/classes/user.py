@@ -1,53 +1,49 @@
+import json
+
 from flask import current_app as app
-from werkzeug.security import check_password_hash
-from enum import Enum, unique
-
-from backend.matcha.db_methods import get_user
-
-@unique
-class Login(Enum):
-    SUCCESS = 0
-    INCORRECT_USER = 1
-    INCORRECT_PASS = 2
 
 class User:
-    def __init__(self, login, password):
-        self.first_name = 'kek'
+    """User class"""
 
+    def __init__(self, attributes):
+        self._user_name = attributes.get('user_name', None)
+        self._password = attributes.get('password', None)
+        self._first_name = attributes.get('first_name', None)
+        self._last_name = attributes.get('last_name', None)
+        self._email = attributes.get('email', None)
+        self._gender = attributes.get('gender', None)
+        self._preference = attributes.get('preference', None)
+        self._biography = attributes.get('biography', None)
+        self._interests = attributes.get('interests', None)
 
-    @staticmethod
-    def login(data):
-        user_name = data['user_name']
-        password = data['password']
+    def get_user_name(self):
+        return self._user_name
 
-        app.logger.info(f'username - {user_name}')
-        app.logger.info(f'password - {password}')
+    def get_password(self):
+        return self._password
 
-        user = get_user(user_name)
+    def get_email(self):
+        return self._email
 
-        if user is None:
-            return Login.INCORRECT_USER
-        elif not check_password_hash(user['password'], password):
-            return Login.INCORRECT_PASS
+    def get_first_name(self):
+        return self._first_name
 
-        return Login.SUCCESS
+    def get_last_name(self):
+        return self._last_name
 
+    def get_gender(self):
+        return self._gender
 
-    def register(self, data):
-        user_name = data['user_name']
-        password = data['password']
-        email = data['email']
-        last_name = data['last_name']
-        first_name = data['first_name']
+    def get_preference(self):
+        return self._preference
 
-        app.logger.info(f'user_name - {user_name}')
-        app.logger.info(f'password - {password}')
-        app.logger.info(f'first_name - {first_name}')
-        app.logger.info(f'last_name - {last_name}')
-        app.logger.info(f'email - {email}')
+    def get_biography(self):
+        return self._biography
 
-        if not user_name:
-            return {'message': 'user_name is required'}, 400
-        elif not password:
-            return {'message': 'password is required'}, 400
+    def add_interests(self, *interests):
+        self._interests = interests
 
+    def to_json(self):
+        return {'user_name': self._user_name, 'first_name': self._first_name,
+                'last_name': self._last_name, 'email': self._email, 'gender': self._gender,
+                'preference': self._preference, 'biography': self._biography}

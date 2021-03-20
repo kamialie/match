@@ -1,12 +1,10 @@
 from sqlalchemy import text
 from werkzeug.security import generate_password_hash
 
-from backend.matcha.db import get_engine
+#from matcha.db import get_engine
 
 
-def get_user_id(user_name):
-    engine = get_engine()
-
+def get_user_id(engine, user_name):
     result = engine.execute(
         text('SELECT user_id FROM Users WHERE user_name = :u'),
         u=user_name
