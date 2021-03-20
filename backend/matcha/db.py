@@ -1,12 +1,14 @@
 import click
-import json
+#import json
 
 from flask import current_app, g
 from flask.cli import with_appcontext
 
 from sqlalchemy import create_engine, text
 
-from matcha.db_methods import register_user, get_user_id, update_profile
+#from matcha.db_methods import register_user, get_user_id, update_profile
+#from matcha.handler.user import UserHandler
+#from matcha.classes.user import User
 
 #from sqlalchemy_utils import functions
 
@@ -49,20 +51,30 @@ def init_db():
             conn.execute(query)
 
 
-def init_db_contents():
-    engine = get_engine()
-
-    with current_app.open_resource('data.json') as f:
-        data = json.loads(f.read().decode('utf-8'))
-        for user in data['users']:
-            register_user(engine, user['user_name'], user['password'],
-                          user['first_name'], user['last_name'], user['email'])
-            click.echo(f'Created user {user["user_name"]}')
-
-            # TODO think of better way to avoid extra method call
-            user_id = get_user_id(engine, user['user_name'])
-            update_profile(engine, user_id, user['gender'], user['preference'], user['biography'], user['interests'])
-            click.echo(f'User {user["user_name"]} profile updated')
+# def init_db_contents():
+#     engine = get_engine()
+#
+#     with current_app.open_resource('data.json') as f:
+#         data = json.loads(f.read().decode('utf-8'))
+#         handler = UserHandler()
+#         userRepository = UserRepository()
+#
+#         for user_data in data['users']:
+#             #handler.register(user['user_name'], user['password'], user['email'], user['first_name'], user['last_name'])
+#             user = User(user_data)
+#
+#             engine.execute(
+#                 text(
+#                     'INSERT INTO Users (user_name, password, first_name, last_name, email) VALUES (:u, :p, :f, :l, :e)'),
+#                 u=user['user_name'], p=user.get_password(), f=user.get_first_name(), l=user.get_last_name(),
+#                 e=user.get_email()
+#             )
+#             click.echo(f'Created user {user["user_name"]}')
+#
+#             # TODO think of better way to avoid extra method call
+#             #user_id = get_user_id(engine, user['user_name'])
+#             #update_profile(engine, user_id, user['gender'], user['preference'], user['biography'], user['interests'])
+#             #click.echo(f'User {user["user_name"]} profile updated')
 
 
 @click.command('init-db')
@@ -73,15 +85,14 @@ def init_db_command():
     click.echo('Initialized the database')
 
 
-@click.command('init-db-contents')
-@with_appcontext
-def init_db_contents_command():
-    """Fill in data in fresh database"""
-    init_db_contents()
-    click.echo('Initialized the database contents')
+# @click.command('init-db-contents')
+# @with_appcontext
+# def init_db_contents_command():
+#     """Fill in data in fresh database"""
+#     init_db_contents()
+#     click.echo('Initialized the database contents')
 
 
 def init_app(app):
     app.teardown_appcontext(close_engine)
     app.cli.add_command(init_db_command)
-    app.cli.add_command(init_db_contents_command)

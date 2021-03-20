@@ -93,13 +93,12 @@ def profile():
     elif request.method == 'PUT':
         # TODO try catch for missing fields
         user_name = content['user_name']
-        password = content['password']
-        email = content['email']
-        last_name = content['last_name']
-        first_name = content['first_name']
+        gender = content['gender']
+        preference = content['preference']
+        biography = content['biography']
 
         try:
-            handler.update(user_name, password, email, first_name, last_name)
+            handler.update(user_name, gender, preference, biography)
             return {'message': f'profile of {user_name} is updated'}, 200
         except UserNameNotFoundError as e:
             app.logger.warning(e)

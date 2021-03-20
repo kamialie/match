@@ -39,6 +39,8 @@ def create_app(test_config=None):
 
     from . import db
     db.init_app(app)
+    from . import init_db
+    init_db.run(app)
 
     #from . import user
     #app.register_blueprint(user.bp)
