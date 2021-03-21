@@ -1,12 +1,15 @@
 import os
 
 from flask import Flask
+from flask_cors import CORS
 from sqlalchemy.engine.url import URL
 
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
+    CORS(app, supports_credentials=True)
+
     database = {
         'drivername': 'postgres',
         'username': 'admin',

@@ -4,7 +4,7 @@ from matcha.handler.user import UserHandler, UserNameNotFoundError, WrongPasswor
 
 bp = Blueprint('user', __name__, url_prefix='/user')
 
-@bp.route('', methods=('POST',))
+@bp.route('/login', methods=('POST',))
 def login():
     """ /login request handler """
     if request.method == 'POST':
