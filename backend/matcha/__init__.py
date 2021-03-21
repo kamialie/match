@@ -47,10 +47,10 @@ def create_app(test_config=None):
     from matcha.endpoints import user
     app.register_blueprint(user.bp)
 
-    from . import reaction
-    app.register_blueprint(reaction.bp)
+    #from . import reaction
+    #app.register_blueprint(reaction.bp)
 
-    from . import block
-    app.register_blueprint(block.bp)
+    #from . import block
+    #app.register_blueprint(block.bp)
 
     return app
