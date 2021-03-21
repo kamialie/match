@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3.3"
 
 services:
   backend:
@@ -8,12 +8,12 @@ services:
       - backend
       - frontend
 
-  frontend:
-    networks:
-      - frontend
-    ports:
-      - "3000:3000"
-    tty: true
+# frontend:
+#   networks:
+#     - frontend
+#   ports:
+#     - "3000:3000"
+#   tty: true
 
   db:
     environment:
