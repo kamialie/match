@@ -54,6 +54,7 @@ class UserHandler:
             raise UserNameNotFoundError(user_name)
         elif not check_password_hash(user.get_password(), password):
             raise WrongPasswordError(user_name)
+        return user.to_json()
 
     def register(self, user_name, password, email, first_name, last_name):
         user = self._userRepository.get_by_user_name(user_name)

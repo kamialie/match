@@ -6,7 +6,6 @@ bp = Blueprint('user', __name__, url_prefix='/user')
 
 @bp.route('/login', methods=('POST',))
 def login():
-    """ /login request handler """
     if request.method == 'POST':
         content = request.json
         app.logger.info(content)
@@ -16,9 +15,9 @@ def login():
 
         handler = UserHandler()
         try:
-            handler.login(user_name, password)
+            user_data_json = handler.login(user_name, password)
             # TODO return user object
-            return {'message': 'Successful login'}, 200
+            return user_data_json, 200
         except UserNameNotFoundError as e:
             app.logger.warning(e)
             return {'message': 'Incorrect user_name'}, 400
@@ -29,6 +28,11 @@ def login():
             app.logger.warning(e.args)
             return {'message': 'Internal error'}, 500
     return 405
+
+@bp.route('/logout', methods=('POST',))
+def logout():
+    if request.method == 'POST':
+        return {'message': 'Logout successful'}, 200
 
 @bp.route('/register', methods=('POST', ))
 def register():
@@ -45,8 +49,8 @@ def register():
         first_name = content['first_name']
 
         try:
-            handler.register(user_name, password, email, last_name, first_name)
-            return {'message': 'User created successfully!'}, 201
+            user_data_json = handler.register(user_name, password, email, last_name, first_name)
+            return user_data_json, 200
         except UserAlreadyExistsError as e:
             app.logger.warning(e)
             return {'message': str(e)}, 400
@@ -85,8 +89,8 @@ def profile():
         user_name = content['user_name']
 
         try:
-            user_json = handler.get_info(user_name)
-            return {'user_info': user_json}, 200
+            user_data_json = handler.get_info(user_name)
+            return user_data_json, 200
         except UserNameNotFoundError as e:
             app.logger.warning(e)
             return {'message': str(e)}, 400
