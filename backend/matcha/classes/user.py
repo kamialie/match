@@ -6,7 +6,7 @@ class User:
     """User class"""
 
     def __init__(self, attributes):
-        self._user_name = attributes.get('user_name', None)
+        self._username = attributes.get('username', None)
         self._password = attributes.get('password', None)
         self._first_name = attributes.get('first_name', None)
         self._last_name = attributes.get('last_name', None)
@@ -16,8 +16,8 @@ class User:
         self._biography = attributes.get('biography', None)
         self._interests = attributes.get('interests', None)
 
-    def get_user_name(self):
-        return self._user_name
+    def get_username(self):
+        return self._username
 
     def get_password(self):
         return self._password
@@ -44,6 +44,6 @@ class User:
         self._interests = interests
 
     def to_json(self):
-        return {'user_name': self._user_name, 'first_name': self._first_name,
+        return {'username': self._username, 'first_name': self._first_name,
                 'last_name': self._last_name, 'email': self._email, 'gender': self._gender,
                 'preference': self._preference, 'biography': self._biography}

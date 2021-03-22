@@ -7,28 +7,28 @@ class UserHandlerError(Exception):
     """Base class for UserHandler errors"""
     pass
 
-# TODO add arguments to distingush between login and delete
+# TODO add arguments to distinguish between login and delete
 class UserNameNotFoundError(UserHandlerError):
-    def __init__(self, user_name):
-        self.user_name = user_name
+    def __init__(self, username):
+        self.username = username
 
     def __str__(self):
-        return f'user_name {self.user_name} is not found!'
+        return f'username {self.username} is not found!'
 
 
 class WrongPasswordError(UserHandlerError):
-    def __init__(self, user_name):
-        self.user_name = user_name
+    def __init__(self, username):
+        self.username = username
 
     def __str__(self):
-        return f'{self.user_name} user entered wrong password!'
+        return f'{self.username} user entered wrong password!'
 
 class UserAlreadyExistsError(UserHandlerError):
-    def __init__(self, user_name):
-        self.user_name = user_name
+    def __init__(self, username):
+        self.username = username
 
     def __str__(self):
-        return f'{self.user_name} user already exists!'
+        return f'{self.username} user already exists!'
 
 class UserHandler:
     """Handler for user related operations"""
@@ -38,50 +38,50 @@ class UserHandler:
         self._user = None
         self._userRepository = UserRepository()
 
-    def get_info(self, user_name):
+    def get_info(self, username):
         """ Return user info json"""
-        user = self._userRepository.get_by_user_name(user_name)
+        user = self._userRepository.get_by_username(username)
 
         if user is None:
-            raise UserNameNotFoundError(user_name)
+            raise UserNameNotFoundError(username)
         return user.to_json()
 
-    def login(self, user_name, password):
+    def login(self, username, password):
         """Find user and match password"""
-        user = self._userRepository.get_by_user_name(user_name)
+        user = self._userRepository.get_by_username(username)
 
         if user is None:
-            raise UserNameNotFoundError(user_name)
+            raise UserNameNotFoundError(username)
         elif not check_password_hash(user.get_password(), password):
-            raise WrongPasswordError(user_name)
+            raise WrongPasswordError(username)
         return user.to_json()
 
-    def register(self, user_name, password, email, first_name, last_name):
-        user = self._userRepository.get_by_user_name(user_name)
+    def register(self, username, password, email, first_name, last_name):
+        user = self._userRepository.get_by_username(username)
         if user is not None:
-            raise UserAlreadyExistsError(user_name)
+            raise UserAlreadyExistsError(username)
 
-        attributes = {'user_name': user_name, 'password': generate_password_hash(password), 'email': email,
+        attributes = {'username': username, 'password': generate_password_hash(password), 'email': email,
                       'first_name': first_name, 'last_name': last_name}
         new_user = User(attributes)
         self._userRepository.create(new_user)
 
-    def delete(self, user_name, password):
-        user = self._userRepository.get_by_user_name(user_name)
+    def delete(self, username, password):
+        user = self._userRepository.get_by_username(username)
 
         if user is None:
-            raise UserNameNotFoundError(user_name)
+            raise UserNameNotFoundError(username)
         elif not check_password_hash(user.get_password(), password):
-            raise WrongPasswordError(user_name)
-        self._userRepository.delete(user_name)
+            raise WrongPasswordError(username)
+        self._userRepository.delete(username)
 
-    def update(self, user_name, gender, preference, biography):
-        user = self._userRepository.get_by_user_name(user_name)
+    def update(self, username, gender, preference, biography):
+        user = self._userRepository.get_by_username(username)
 
         if user is None:
-            raise UserNameNotFoundError(user_name)
+            raise UserNameNotFoundError(username)
 
-        attributes = {'user_name': user_name, 'gender': gender, 'preference': preference, 'biography': biography}
+        attributes = {'username': username, 'gender': gender, 'preference': preference, 'biography': biography}
         new_user = User(attributes)
         self._userRepository.update(new_user)
 
@@ -122,22 +122,22 @@ class UserHandler:
         # user_profile["user"]["interests"] = [r["name"] for r in result]
 
 
-# def get_user_id(engine, user_name):
+# def get_user_id(engine, username):
 #     result = engine.execute(
-#         text('SELECT user_id FROM Users WHERE user_name = :u'),
-#         u=user_name
+#         text('SELECT user_id FROM Users WHERE username = :u'),
+#         u=username
 #     ).fetchone()
 #
 #     if result is not None:
 #         return result['user_id']
 #
 #
-# def get_user(user_name):
+# def get_user(username):
 #     engine = get_engine()
 #
 #     result = engine.execute(
-#         text('SELECT * FROM Users WHERE user_name = :u'),
-#         u=user_name
+#         text('SELECT * FROM Users WHERE username = :u'),
+#         u=username
 #     ).fetchone()
 #
 #     return result

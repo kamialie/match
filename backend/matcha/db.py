@@ -60,21 +60,21 @@ def init_db():
 #         userRepository = UserRepository()
 #
 #         for user_data in data['users']:
-#             #handler.register(user['user_name'], user['password'], user['email'], user['first_name'], user['last_name'])
+#             #handler.register(user['username'], user['password'], user['email'], user['first_name'], user['last_name'])
 #             user = User(user_data)
 #
 #             engine.execute(
 #                 text(
-#                     'INSERT INTO Users (user_name, password, first_name, last_name, email) VALUES (:u, :p, :f, :l, :e)'),
-#                 u=user['user_name'], p=user.get_password(), f=user.get_first_name(), l=user.get_last_name(),
+#                     'INSERT INTO Users (username, password, first_name, last_name, email) VALUES (:u, :p, :f, :l, :e)'),
+#                 u=user['username'], p=user.get_password(), f=user.get_first_name(), l=user.get_last_name(),
 #                 e=user.get_email()
 #             )
-#             click.echo(f'Created user {user["user_name"]}')
+#             click.echo(f'Created user {user["username"]}')
 #
 #             # TODO think of better way to avoid extra method call
-#             #user_id = get_user_id(engine, user['user_name'])
+#             #user_id = get_user_id(engine, user['username'])
 #             #update_profile(engine, user_id, user['gender'], user['preference'], user['biography'], user['interests'])
-#             #click.echo(f'User {user["user_name"]} profile updated')
+#             #click.echo(f'User {user["username"]} profile updated')
 
 
 @click.command('init-db')

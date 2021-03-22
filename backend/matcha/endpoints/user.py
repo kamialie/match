@@ -10,17 +10,17 @@ def login():
         content = request.json
         app.logger.info(content)
 
-        user_name = content['user_name']
+        username = content['username']
         password = content['password']
 
         handler = UserHandler()
         try:
-            user_data_json = handler.login(user_name, password)
+            user_data_json = handler.login(username, password)
             # TODO return user object
             return user_data_json, 200
         except UserNameNotFoundError as e:
             app.logger.warning(e)
-            return {'message': 'Incorrect user_name'}, 400
+            return {'message': 'Incorrect username'}, 400
         except WrongPasswordError as e:
             app.logger.warning(e)
             return {'message': 'Incorrect password'}, 400
@@ -42,14 +42,14 @@ def register():
     handler = UserHandler()
     if request.method == 'POST':
         # TODO try catch for missing fields
-        user_name = content['user_name']
+        username = content['username']
         password = content['password']
         email = content['email']
         last_name = content['last_name']
         first_name = content['first_name']
 
         try:
-            user_data_json = handler.register(user_name, password, email, last_name, first_name)
+            user_data_json = handler.register(username, password, email, last_name, first_name)
             return user_data_json, 200
         except UserAlreadyExistsError as e:
             app.logger.warning(e)
@@ -65,11 +65,11 @@ def delete():
     handler = UserHandler()
     if request.method == 'DELETE':
         # TODO try catch for missing fields
-        user_name = content['user_name']
+        username = content['username']
         password = content['password']
 
         try:
-            handler.delete(user_name, password)
+            handler.delete(username, password)
             return {'message': 'User is deleted'}, 200
         except UserNameNotFoundError as e:
             app.logger.warning(e)
@@ -86,24 +86,24 @@ def profile():
     handler = UserHandler()
     if request.method == 'GET':
         # TODO try catch for missing fields
-        user_name = content['user_name']
+        username = content['username']
 
         try:
-            user_data_json = handler.get_info(user_name)
+            user_data_json = handler.get_info(username)
             return user_data_json, 200
         except UserNameNotFoundError as e:
             app.logger.warning(e)
             return {'message': str(e)}, 400
     elif request.method == 'PUT':
         # TODO try catch for missing fields
-        user_name = content['user_name']
+        username = content['username']
         gender = content['gender']
         preference = content['preference']
         biography = content['biography']
 
         try:
-            handler.update(user_name, gender, preference, biography)
-            return {'message': f'profile of {user_name} is updated'}, 200
+            handler.update(username, gender, preference, biography)
+            return {'message': f'profile of {username} is updated'}, 200
         except UserNameNotFoundError as e:
             app.logger.warning(e)
             return {'message': str(e)}, 400
