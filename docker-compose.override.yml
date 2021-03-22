@@ -10,13 +10,15 @@ services:
     ports:
       - "5000:5000"
 
-# frontend:
-#   build:
-#     context: ./frontend
-#     dockerfile: dockerfiles/dev/Dockerfile
-#   volumes:
-#     - ./frontend:/home/frontend
-#   tty: true
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: dockerfiles/dev/Dockerfile
+    volumes:
+      - ./frontend:/home/frontend
+    tty: true
+    ports:
+      - "3000:8080"
 
   db:
     image: postgres:12
