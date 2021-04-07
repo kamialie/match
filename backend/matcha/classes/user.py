@@ -1,11 +1,8 @@
-import json
-
-from flask import current_app as app
-
 class User:
     """User class"""
 
     def __init__(self, attributes):
+        self._id = attributes.get('id', None)
         self._username = attributes.get('username', None)
         self._password = attributes.get('password', None)
         self._first_name = attributes.get('first_name', None)

@@ -1,6 +1,6 @@
 from flask import Blueprint, request, current_app as app
 
-from matcha.handler.user import UserHandler, UserNameNotFoundError, WrongPasswordError, UserAlreadyExistsError
+from matcha.handlers.user import UserHandler, UserNameNotFoundError, WrongPasswordError, UserAlreadyExistsError
 
 bp = Blueprint('user', __name__, url_prefix='/user')
 
@@ -8,7 +8,6 @@ bp = Blueprint('user', __name__, url_prefix='/user')
 def login():
     if request.method == 'POST':
         content = request.json
-        app.logger.info(content)
 
         username = content['username']
         password = content['password']
@@ -37,7 +36,6 @@ def logout():
 @bp.route('/register', methods=('POST', ))
 def register():
     content = request.json
-    app.logger.info(content)
 
     handler = UserHandler()
     if request.method == 'POST':
@@ -60,7 +58,6 @@ def register():
 @bp.route('/delete', methods=('DELETE',))
 def delete():
     content = request.json
-    app.logger.info(content)
 
     handler = UserHandler()
     if request.method == 'DELETE':
@@ -81,7 +78,6 @@ def delete():
 @bp.route('/profile', methods=('GET', 'PUT'))
 def profile():
     content = request.json
-    app.logger.info(content)
 
     handler = UserHandler()
     if request.method == 'GET':

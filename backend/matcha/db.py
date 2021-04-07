@@ -1,7 +1,7 @@
 import click
 #import json
 
-from flask import current_app, g
+from flask import current_app as app, g
 from flask.cli import with_appcontext
 
 from sqlalchemy import create_engine, text
@@ -27,10 +27,10 @@ from sqlalchemy import create_engine, text
 def get_engine():
     if 'engine' not in g:
         g.engine = create_engine(
-            current_app.config['DATABASE'],
+            app.config['DATABASE'],
             isolation_level='AUTOCOMMIT',
             client_encoding='utf8',
-            echo=True)
+            echo=False)
 
     return g.engine
 
@@ -46,7 +46,7 @@ def init_db():
     engine = get_engine()
 
     with engine.connect() as conn:
-        with current_app.open_resource('schema.sql') as f:
+        with app.open_resource('schema.sql') as f:
             query = text(f.read().decode('utf8'))
             conn.execute(query)
 
@@ -82,7 +82,7 @@ def init_db():
 def init_db_command():
     """Clear the existing data and create new tables."""
     init_db()
-    click.echo('Initialized the database')
+    app.logger.info('Initialized the database')
 
 
 # @click.command('init-db-contents')

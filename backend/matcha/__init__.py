@@ -1,14 +1,20 @@
 import os
 
-from flask import Flask
+from flask import Flask, request
 from flask_cors import CORS
 from sqlalchemy.engine.url import URL
-
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
+
+    # handle cors policy
     CORS(app, supports_credentials=True)
+
+    # inject logging middleware
+    @app.before_request
+    def before_request_func():
+        app.logger.info('Request body - %s', request.json)
 
     database = {
         'drivername': 'postgres',
