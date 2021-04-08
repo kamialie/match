@@ -1,12 +1,21 @@
 import os
 
-from flask import Flask
+from flask import Flask, request
+from flask_cors import CORS
 from sqlalchemy.engine.url import URL
-
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
+
+    # handle cors policy
+    CORS(app, supports_credentials=True)
+
+    # inject logging middleware
+    @app.before_request
+    def before_request_func():
+        app.logger.info('Request body - %s', request.json)
+
     database = {
         'drivername': 'postgres',
         'username': 'admin',
@@ -39,14 +48,18 @@ def create_app(test_config=None):
 
     from . import db
     db.init_app(app)
+    from . import init_db
+    init_db.run(app)
 
-    from . import user
+    #from . import user
+    #app.register_blueprint(user.bp)
+    from matcha.endpoints import user
     app.register_blueprint(user.bp)
 
-    from . import reaction
-    app.register_blueprint(reaction.bp)
+    #from . import reaction
+    #app.register_blueprint(reaction.bp)
 
-    from . import block
-    app.register_blueprint(block.bp)
+    #from . import block
+    #app.register_blueprint(block.bp)
 
     return app

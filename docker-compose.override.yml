@@ -1,3 +1,5 @@
+version: "3.3"
+
 services:
   backend:
     build:
@@ -15,6 +17,8 @@ services:
     volumes:
       - ./frontend:/home/frontend
     tty: true
+    ports:
+      - "3000:8080"
 
   db:
     image: postgres:12

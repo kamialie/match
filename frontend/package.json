@@ -4,7 +4,7 @@
   "author": "rgyles/lwyl-the",
   "license": "MIT",
   "scripts": {
-    "start": "cross-env NODE_ENV=development webpack-dev-server --mode development --open --hot",
+    "start": "cross-env NODE_ENV=development webpack-dev-server --host 0.0.0.0 --mode development --open --hot",
     "build": "cross-env NODE_ENV=production webpack --mode production"
   },
   "dependencies": {

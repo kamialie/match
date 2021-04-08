@@ -1,7 +1,7 @@
 {
     "users" : [
         {
-            "user_name": "root",
+            "username": "root",
             "password": "pass",
             "first_name": "root",
             "last_name": "sudo",
@@ -14,7 +14,7 @@
             ]
         },
         {
-            "user_name": "kam",
+            "username": "kam",
             "password": "pasw",
             "first_name": "kamil",
             "last_name": "aliev",
@@ -27,7 +27,7 @@
             ]
         },
         {
-            "user_name": "sve",
+            "username": "sve",
             "password": "paso",
             "first_name": "sveva",
             "last_name": "mazzari",
@@ -40,7 +40,7 @@
             ]
         },
         {
-            "user_name": "vile",
+            "username": "vile",
             "password": "psss",
             "first_name": "vilena",
             "last_name": "guslyakova",
