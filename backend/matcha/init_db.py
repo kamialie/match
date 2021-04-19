@@ -5,14 +5,15 @@ from flask import current_app as app
 from flask.cli import with_appcontext
 
 from matcha.handlers.user import UserHandler
+from matcha.handlers.auth import AuthHandler
 
 def init_db_contents():
     with app.open_resource('data.json') as f:
         data = json.loads(f.read().decode('utf-8'))
-        handler = UserHandler()
+        handler = AuthHandler()
 
         for user in data['users']:
-            handler.register(user['username'], user['password'], user['email'], user['first_name'], user['last_name'])
+            handler.register(user)
             app.logger.info(f'Created user {user["username"]}')
 
             # TODO think of better way to avoid extra method call

@@ -2,7 +2,7 @@ class User:
     """User class"""
 
     def __init__(self, attributes):
-        self._id = attributes.get('id', None)
+        self._id = attributes.get('user_id', None)
         self._username = attributes.get('username', None)
         self._password = attributes.get('password', None)
         self._first_name = attributes.get('first_name', None)
@@ -12,6 +12,9 @@ class User:
         self._preference = attributes.get('preference', None)
         self._biography = attributes.get('biography', None)
         self._interests = attributes.get('interests', None)
+
+    def get_user_id(self):
+        return self._id
 
     def get_username(self):
         return self._username

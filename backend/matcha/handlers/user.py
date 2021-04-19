@@ -1,4 +1,4 @@
-from werkzeug.security import check_password_hash, generate_password_hash
+from flask import Blueprint, request, current_app as app
 
 from matcha.repository import UserRepository
 from matcha.classes.user import User
@@ -20,42 +20,21 @@ class UserHandler:
             raise UserNameNotFoundError(username)
         return user.to_json()
 
-    def login(self, username, password):
-        """Find user and match password"""
-        user = self._userRepository.get_by_username(username)
-
-        if user is None:
-            raise UserNameNotFoundError(username)
-        elif not check_password_hash(user.get_password(), password):
-            raise WrongPasswordError(username)
-        return user.to_json()
-
-    def register(self, username, password, email, first_name, last_name):
-        user = self._userRepository.get_by_username(username)
-        if user is not None:
-            raise UserAlreadyExistsError(username)
-
-        attributes = {'username': username, 'password': generate_password_hash(password), 'email': email,
-                      'first_name': first_name, 'last_name': last_name}
-        new_user = User(attributes)
-        self._userRepository.create(new_user)
-
     def delete(self, username, password):
         user = self._userRepository.get_by_username(username)
 
         if user is None:
             raise UserNameNotFoundError(username)
-        elif not check_password_hash(user.get_password(), password):
+        elif not user.verify_password(password):
             raise WrongPasswordError(username)
         self._userRepository.delete(username)
 
-    def update(self, username, gender, preference, biography):
-        user = self._userRepository.get_by_username(username)
+    def update(self, attributes):
+        user = self._userRepository.get_by_username(attributes['username'])
 
         if user is None:
-            raise UserNameNotFoundError(username)
+            raise UserNameNotFoundError(attributes['username'])
 
-        attributes = {'username': username, 'gender': gender, 'preference': preference, 'biography': biography}
         new_user = User(attributes)
         self._userRepository.update(new_user)
 
