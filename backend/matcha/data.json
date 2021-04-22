@@ -1,6 +1,7 @@
 {
     "users" : [
         {
+            "user_id": 0,
             "username": "root",
             "password": "pass",
             "first_name": "root",
@@ -14,6 +15,7 @@
             ]
         },
         {
+            "user_id": 0,
             "username": "kam",
             "password": "pasw",
             "first_name": "kamil",
@@ -27,6 +29,7 @@
             ]
         },
         {
+            "user_id": 0,
             "username": "sve",
             "password": "paso",
             "first_name": "sveva",
@@ -40,6 +43,7 @@
             ]
         },
         {
+            "user_id": 0,
             "username": "vile",
             "password": "psss",
             "first_name": "vilena",

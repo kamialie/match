@@ -1,48 +1,42 @@
-from flask import Blueprint, request, current_app as app
+from flask import Blueprint, request, current_app as app, g
 from matcha.handlers.user import UserHandler
-from matcha.exceptions.user import UserNameNotFoundError, WrongPasswordError
-from matcha.handlers.auth import AuthHandler
-from jwt import ExpiredSignatureError, InvalidTokenError
+from matcha.handlers.auth import verify_token
+from matcha.exceptions.user import UserIdNotFoundError, WrongPasswordError, UserHandlerError
 
 bp = Blueprint('user', __name__, url_prefix='/user')
-
-bp.before_request(AuthHandler.verify_token)
+bp.before_request(verify_token)
 
 @bp.route('/profile', methods=('GET', 'PUT'))
 def profile():
-    content = request.json
+    request_body = request.json
 
     if request.method == 'GET':
-        username = content.get('username')
-        token = content.get('token')
-        if username is None or token is None:
-            return {'error': 'Missing arguments'}, 400
-
         handler = UserHandler()
+
+        # TODO add summary error
         try:
-            user_data_json = handler.get_info(username)
-            return user_data_json, 200
-        except UserNameNotFoundError as e:
+            user_data_json = handler.get_profile(g.user_id)
+        except UserIdNotFoundError as e:
             app.logger.warning(e)
             return {'error': str(e)}, 400
+        except Exception as e:
+            app.logger.warning(e)
+            return {'error': 'Internal error'}, 500
+
+        return user_data_json, 200
     elif request.method == 'PUT':
-        attributes = {
-            'username': content.get('username'),
-            'gender': content.get('gender'),
-            'preference': content.get('preference'),
-            'biography': content.get('biography'),
-        }
-        for v in attributes.values():
-            if v is None:
-                return {'error': 'Missing arguments'}, 400
-
         handler = UserHandler()
+
         try:
-            handler.update(attributes)
-            return {'success': f'profile of {attributes["username"]} is updated'}, 200
-        except UserNameNotFoundError as e:
+            handler.update(request_body)
+        except UserHandlerError as e:
             app.logger.warning(e)
             return {'error': str(e)}, 400
+        except Exception as e:
+            app.logger.warning(e)
+            return {'error': 'Internal error'}, 500
+
+        return {'success': f'profile of {request_body["username"]} is updated'}, 200
 
 @bp.route('/delete', methods=('POST',))
 def delete():
@@ -50,15 +44,13 @@ def delete():
 
     handler = UserHandler()
     if request.method == 'DELETE':
-        username = content.get('username')
-        password = content.get('password')
-        if username is None or password is None:
-            return {'error': 'Missing arguments'}, 400
-
         try:
-            handler.delete(username, password)
+            handler.delete(g.user_id, content['password'])
             return {'success': 'User is deleted'}, 200
-        except UserNameNotFoundError as e:
+        except KeyError as e:
+            app.logger.warning(e)
+            return {'error': str(e)}, 400
+        except UserIdNotFoundError as e:
             app.logger.warning(e)
             return {'error': str(e)}, 400
         except WrongPasswordError as e:

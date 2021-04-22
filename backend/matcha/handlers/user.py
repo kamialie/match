@@ -1,42 +1,57 @@
-from flask import Blueprint, request, current_app as app
-
+from werkzeug.security import generate_password_hash
 from matcha.repository import UserRepository
-from matcha.classes.user import User
-from matcha.exceptions.user import UserNameNotFoundError, WrongPasswordError, UserAlreadyExistsError
+from matcha.objects.user import UserFactory
+from matcha.exceptions.user import UserIdNotFoundError, WrongPasswordError, UserAlreadyExistsError
 
 class UserHandler:
     """Handler for user related operations"""
 
     def __init__(self):
-        # TODO check if user exists and set a boolean
-        self._user = None
         self._userRepository = UserRepository()
 
-    def get_info(self, username):
-        """ Return user info json"""
-        user = self._userRepository.get_by_username(username)
+    def get_profile(self, user_id):
+        user = self._userRepository.get_user_by_id(user_id)
 
         if user is None:
-            raise UserNameNotFoundError(username)
-        return user.to_json()
+            raise UserIdNotFoundError(user_id)
+        return user.as_dict()
 
-    def delete(self, username, password):
-        user = self._userRepository.get_by_username(username)
+    def initialize(self, data):
+        user = UserFactory.create_user(data)
+
+        if self._userRepository.get_base_user_by_name(user.name):
+            raise UserAlreadyExistsError(user.name)
+
+        user.password = generate_password_hash(user.password)
+        self._userRepository.initialize(user)
+
+    def register(self, data):
+        user = UserFactory.create_base_user(data)
+
+        if self._userRepository.get_base_user_by_name(user.name):
+            raise UserAlreadyExistsError(user.name)
+
+        user.password = generate_password_hash(user.password)
+        self._userRepository.create(user)
+
+        # TODO send confirmation link to email
+
+    def update(self, data):
+        user = UserFactory.create_user(data)
+
+        if not self._userRepository.get_base_user_by_id(user.id):
+            raise UserIdNotFoundError(user.id)
+
+        self._userRepository.update(user)
+
+    def delete(self, user_id, password):
+        user = self._userRepository.get_base_user_by_id(user_id)
 
         if user is None:
-            raise UserNameNotFoundError(username)
+            raise UserIdNotFoundError(user_id)
         elif not user.verify_password(password):
-            raise WrongPasswordError(username)
-        self._userRepository.delete(username)
-
-    def update(self, attributes):
-        user = self._userRepository.get_by_username(attributes['username'])
-
-        if user is None:
-            raise UserNameNotFoundError(attributes['username'])
-
-        new_user = User(attributes)
-        self._userRepository.update(new_user)
+            raise WrongPasswordError(user.name)
+        self._userRepository.delete(user_id)
 
         # app.logger.info(f'interests:')
         # for item in interests:
@@ -73,24 +88,3 @@ class UserHandler:
         # ).fetchall()
         #
         # user_profile["user"]["interests"] = [r["name"] for r in result]
-
-
-# def get_user_id(engine, username):
-#     result = engine.execute(
-#         text('SELECT user_id FROM Users WHERE username = :u'),
-#         u=username
-#     ).fetchone()
-#
-#     if result is not None:
-#         return result['user_id']
-#
-#
-# def get_user(username):
-#     engine = get_engine()
-#
-#     result = engine.execute(
-#         text('SELECT * FROM Users WHERE username = :u'),
-#         u=username
-#     ).fetchone()
-#
-#     return result
