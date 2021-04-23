@@ -14,12 +14,6 @@ def init_db_contents():
             handler.initialize(user_data)
             app.logger.info(f'Created user {user_data["username"]}')
 
-            # TODO think of better way to avoid extra method call
-            #user_id = get_user_id(engine, user['username'])
-            #update_profile(engine, user_id, user['gender'], user['preference'], user['biography'], user['interests'])
-            #click.echo(f'User {user["username"]} profile updated')
-
-
 @click.command('init-db-contents')
 @with_appcontext
 def init_db_contents_command():

@@ -1,7 +1,7 @@
 from flask import Blueprint, request, current_app as app, g
 from matcha.handlers.user import UserHandler
 from matcha.handlers.auth import verify_token
-from matcha.exceptions.user import UserIdNotFoundError, WrongPasswordError, UserHandlerError
+from matcha.exceptions.user import UserHandlerError
 
 bp = Blueprint('user', __name__, url_prefix='/user')
 bp.before_request(verify_token)
@@ -13,46 +13,54 @@ def profile():
     if request.method == 'GET':
         handler = UserHandler()
 
-        # TODO add summary error
         try:
             user_data_json = handler.get_profile(g.user_id)
-        except UserIdNotFoundError as e:
-            app.logger.warning(e)
-            return {'error': str(e)}, 400
-        except Exception as e:
-            app.logger.warning(e)
-            return {'error': 'Internal error'}, 500
-
-        return user_data_json, 200
-    elif request.method == 'PUT':
-        handler = UserHandler()
-
-        try:
-            handler.update(request_body)
         except UserHandlerError as e:
             app.logger.warning(e)
             return {'error': str(e)}, 400
         except Exception as e:
+            app.logger.error(e)
+            return {'error': 'Internal error'}, 500
+
+        return user_data_json, 200
+    elif request.method == 'PUT':
+        required_attributes = ['username', 'password', 'first_name', 'last_name',
+                               'email', 'gender', 'preference', 'biography']
+        if not all(attr in request_body for attr in required_attributes):
+            return {'error': f'Required attributes - {required_attributes}'}, 400
+
+        handler = UserHandler()
+        try:
+            handler.update(g.user_id, request_body)
+        except UserHandlerError as e:
             app.logger.warning(e)
+            return {'error': str(e)}, 400
+        except Exception as e:
+            app.logger.error(e)
             return {'error': 'Internal error'}, 500
 
         return {'success': f'profile of {request_body["username"]} is updated'}, 200
 
+    return 405
+
 @bp.route('/delete', methods=('POST',))
 def delete():
-    content = request.json
+    request_body = request.json
 
-    handler = UserHandler()
-    if request.method == 'DELETE':
+    if request.method == 'POST':
+        if 'password' not in request_body:
+            return {'error': "Required attributes - ['password']"}, 400
+
+        handler = UserHandler()
         try:
-            handler.delete(g.user_id, content['password'])
-            return {'success': 'User is deleted'}, 200
-        except KeyError as e:
+            handler.delete(g.user_id, request_body['password'])
+        except UserHandlerError as e:
             app.logger.warning(e)
             return {'error': str(e)}, 400
-        except UserIdNotFoundError as e:
-            app.logger.warning(e)
-            return {'error': str(e)}, 400
-        except WrongPasswordError as e:
-            app.logger.warning(e)
-            return {'error': str(e)}, 400
+        except Exception as e:
+            app.logger.error(e)
+            return {'error': 'Internal error'}, 500
+
+        return {'success': 'User is deleted'}, 200
+
+    return 405

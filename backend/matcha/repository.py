@@ -1,5 +1,4 @@
-#from matcha.classes.user import User
-from matcha.objects.user import UserFactory, BaseUser, User
+from matcha.objects.user import User
 from matcha.db import get_engine
 
 from sqlalchemy import text
@@ -20,7 +19,7 @@ class UserRepository(Repository):
         ).fetchone()
 
         if result is not None:
-            return UserFactory.restore_base_user(result)
+            return User(**result)
         return None
 
     def get_base_user_by_id(self, user_id):
@@ -30,7 +29,7 @@ class UserRepository(Repository):
         ).fetchone()
 
         if result is not None:
-            return UserFactory.restore_base_user(**result)
+            return User(**result)
         return None
 
     def get_user_by_id(self, user_id):
@@ -41,7 +40,7 @@ class UserRepository(Repository):
         ).fetchone()
 
         if result is not None:
-            return UserFactory.restore_user(result)
+            return User(**result)
         return None
 
     def get_user_by_name(self, username):
@@ -52,10 +51,10 @@ class UserRepository(Repository):
         ).fetchone()
 
         if result is not None:
-            return UserFactory.restore_user(result)
+            return User(**result)
         return None
 
-    def create(self, user: BaseUser):
+    def create(self, user: User):
         self._engine.execute(
             text('INSERT INTO Users (username, password, first_name, last_name, email) VALUES (:u, :p, :f, :l, :e)'),
             u=user.name, p=user.password, f=user.first_name, l=user.last_name, e=user.email
@@ -70,7 +69,7 @@ class UserRepository(Repository):
         )
 
     def update(self, user: User):
-        # TODO probably change condition from username to user_id
+        # TODO consider removing option to update existing username
         self._engine.execute(
             text('UPDATE Users SET username = :n, password = :p, first_name = :f, last_name = :l, email = :e,'
                  'gender = :g, preference = :pr, biography = :b WHERE user_id = :u'),
@@ -80,7 +79,7 @@ class UserRepository(Repository):
 
     def delete(self, user_id):
         self._engine.execute(
-            text('DELETE FROM Users WHERE username = :u'),
+            text('DELETE FROM Users WHERE user_id = :u'),
             u=user_id
         )
 # def get_user_id(engine, username):

@@ -51,8 +51,9 @@ def create_app(test_config=None):
     from . import init_db
     init_db.run(app)
 
-    #from . import user
-    #app.register_blueprint(user.bp)
+    from matcha.endpoints import registration
+    app.register_blueprint(registration.bp)
+
     from matcha.endpoints import user
     app.register_blueprint(user.bp)
 
