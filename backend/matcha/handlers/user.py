@@ -1,63 +1,61 @@
-from werkzeug.security import check_password_hash, generate_password_hash
-
+from werkzeug.security import generate_password_hash
+from matcha.handlers.auth import verify_password
 from matcha.repository import UserRepository
-from matcha.classes.user import User
-from matcha.exceptions.user import UserNameNotFoundError, WrongPasswordError, UserAlreadyExistsError
+from matcha.objects.user import User
+from matcha.exceptions.user import UserIdNotFoundError, WrongPasswordError, UserAlreadyExistsError
 
 class UserHandler:
     """Handler for user related operations"""
 
     def __init__(self):
-        # TODO check if user exists and set a boolean
-        self._user = None
         self._userRepository = UserRepository()
 
-    def get_info(self, username):
-        """ Return user info json"""
-        user = self._userRepository.get_by_username(username)
+    def get_profile(self, user_id):
+        user = self._userRepository.get_user_by_id(user_id)
 
         if user is None:
-            raise UserNameNotFoundError(username)
-        return user.to_json()
+            raise UserIdNotFoundError(user_id)
+        return user.as_dict()
 
-    def login(self, username, password):
-        """Find user and match password"""
-        user = self._userRepository.get_by_username(username)
+    def initialize(self, data):
+        user = User(**data)
+
+        if self._userRepository.get_base_user_by_name(user.name):
+            raise UserAlreadyExistsError(user.name)
+
+        user.password = generate_password_hash(user.password)
+        self._userRepository.initialize(user)
+
+    def register(self, data):
+        user = User(**data)
+
+        if self._userRepository.get_base_user_by_name(user.name):
+            raise UserAlreadyExistsError(user.name)
+
+        user.password = generate_password_hash(user.password)
+        self._userRepository.create(user)
+
+        # TODO send confirmation link to email
+
+    # TODO consider splitting profile and password update
+    # TODO consider splitting payload between token and profile attributes
+    def update(self, user_id, data):
+        user = User(**data, user_id=user_id)
+
+        if not self._userRepository.get_base_user_by_id(user_id):
+            raise UserIdNotFoundError(user_id)
+
+        user.password = generate_password_hash(user.password)
+        self._userRepository.update(user)
+
+    def delete(self, user_id, password):
+        user = self._userRepository.get_base_user_by_id(user_id)
 
         if user is None:
-            raise UserNameNotFoundError(username)
-        elif not check_password_hash(user.get_password(), password):
-            raise WrongPasswordError(username)
-        return user.to_json()
-
-    def register(self, username, password, email, first_name, last_name):
-        user = self._userRepository.get_by_username(username)
-        if user is not None:
-            raise UserAlreadyExistsError(username)
-
-        attributes = {'username': username, 'password': generate_password_hash(password), 'email': email,
-                      'first_name': first_name, 'last_name': last_name}
-        new_user = User(attributes)
-        self._userRepository.create(new_user)
-
-    def delete(self, username, password):
-        user = self._userRepository.get_by_username(username)
-
-        if user is None:
-            raise UserNameNotFoundError(username)
-        elif not check_password_hash(user.get_password(), password):
-            raise WrongPasswordError(username)
-        self._userRepository.delete(username)
-
-    def update(self, username, gender, preference, biography):
-        user = self._userRepository.get_by_username(username)
-
-        if user is None:
-            raise UserNameNotFoundError(username)
-
-        attributes = {'username': username, 'gender': gender, 'preference': preference, 'biography': biography}
-        new_user = User(attributes)
-        self._userRepository.update(new_user)
+            raise UserIdNotFoundError(user_id)
+        elif not verify_password(user.password, password):
+            raise WrongPasswordError(user.name)
+        self._userRepository.delete(user_id)
 
         # app.logger.info(f'interests:')
         # for item in interests:
@@ -94,24 +92,3 @@ class UserHandler:
         # ).fetchall()
         #
         # user_profile["user"]["interests"] = [r["name"] for r in result]
-
-
-# def get_user_id(engine, username):
-#     result = engine.execute(
-#         text('SELECT user_id FROM Users WHERE username = :u'),
-#         u=username
-#     ).fetchone()
-#
-#     if result is not None:
-#         return result['user_id']
-#
-#
-# def get_user(username):
-#     engine = get_engine()
-#
-#     result = engine.execute(
-#         text('SELECT * FROM Users WHERE username = :u'),
-#         u=username
-#     ).fetchone()
-#
-#     return result

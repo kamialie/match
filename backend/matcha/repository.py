@@ -1,4 +1,4 @@
-from matcha.classes.user import User
+from matcha.objects.user import User
 from matcha.db import get_engine
 
 from sqlalchemy import text
@@ -12,41 +12,75 @@ class Repository:
 class UserRepository(Repository):
     """Repository for User object related operations"""
 
-    def get_by_username(self, username):
+    def get_base_user_by_name(self, username):
         result = self._engine.execute(
-            text('SELECT * FROM Users WHERE username = :u'),
+            text('SELECT username, password, first_name, last_name, email FROM Users WHERE username = :u'),
             u=username
         ).fetchone()
 
         if result is not None:
-            return User(dict(result))
-                # TODO make another request for interests
-                # user.addInterests(interests)
-                #return user
+            return User(**result)
+        return None
 
-            # create and return user object if request is successful
+    def get_base_user_by_id(self, user_id):
+        result = self._engine.execute(
+            text('SELECT username, password, first_name, last_name, email FROM Users WHERE user_id = :u'),
+            u=user_id
+        ).fetchone()
 
-        # return None otherwise
+        if result is not None:
+            return User(**result)
+        return None
+
+    def get_user_by_id(self, user_id):
+        result = self._engine.execute(
+            text('SELECT username, password, first_name, last_name, email, gender, preference, biography '
+                 'FROM Users WHERE user_id = :u'),
+            u=user_id
+        ).fetchone()
+
+        if result is not None:
+            return User(**result)
+        return None
+
+    def get_user_by_name(self, username):
+        result = self._engine.execute(
+            text('SELECT user_id, username, password, first_name, last_name, email, gender, preference, biography '
+                 'FROM Users WHERE username = :u'),
+            u=username
+        ).fetchone()
+
+        if result is not None:
+            return User(**result)
         return None
 
     def create(self, user: User):
         self._engine.execute(
             text('INSERT INTO Users (username, password, first_name, last_name, email) VALUES (:u, :p, :f, :l, :e)'),
-            u=user.get_username(), p=user.get_password(), f=user.get_first_name(), l=user.get_last_name(),
-            e=user.get_email()
+            u=user.name, p=user.password, f=user.first_name, l=user.last_name, e=user.email
+        )
+
+    def initialize(self, user: User):
+        self._engine.execute(
+            text('INSERT INTO Users (username, password, first_name, last_name, email, gender, preference, biography) '
+                 'VALUES (:u, :p, :f, :l, :e, :g, :pr, :b)'),
+            u=user.name, p=user.password, f=user.first_name, l=user.last_name, e=user.email, g=user.gender,
+            pr=user.preference, b=user.biography
         )
 
     def update(self, user: User):
-        # TODO probably change condition from username to user_id
+        # TODO consider removing option to update existing username
         self._engine.execute(
-            text('UPDATE Users SET gender = :g,preference = :p, biography = :b WHERE username = :u'),
-            u=user.get_username(), g=user.get_gender(), p=user.get_preference(), b=user.get_biography()
+            text('UPDATE Users SET username = :n, password = :p, first_name = :f, last_name = :l, email = :e,'
+                 'gender = :g, preference = :pr, biography = :b WHERE user_id = :u'),
+            u=user.id, n=user.name, p=user.password, f=user.first_name, l=user.last_name, e=user.email,
+            g=user.gender, pr=user.preference, b=user.biography
         )
 
-    def delete(self, username):
+    def delete(self, user_id):
         self._engine.execute(
-            text('DELETE FROM Users WHERE username = :u'),
-            u=username
+            text('DELETE FROM Users WHERE user_id = :u'),
+            u=user_id
         )
 # def get_user_id(engine, username):
 #     result = engine.execute(
