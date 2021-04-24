@@ -8,8 +8,6 @@ bp.before_request(verify_token)
 
 @bp.route('/profile', methods=('GET', 'PUT'))
 def profile():
-    request_body = request.json
-
     if request.method == 'GET':
         handler = UserHandler()
 
@@ -24,6 +22,8 @@ def profile():
 
         return user_data_json, 200
     elif request.method == 'PUT':
+        request_body = request.json
+
         required_attributes = ['username', 'password', 'first_name', 'last_name',
                                'email', 'gender', 'preference', 'biography']
         if not all(attr in request_body for attr in required_attributes):

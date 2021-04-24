@@ -12,9 +12,16 @@ def verify_password(password_hash, password):
     return check_password_hash(password_hash, password)
 
 def verify_token():
-    token = request.json.get('token')
-    if token is None:
-        return {'error': 'Missing token attribute'}, 400
+    authorization = request.headers.get('Authorization')
+    if authorization is None:
+        return {'error': 'Missing Authorization header'}, 400
+    try:
+        auth_type, token = authorization.split()
+    except ValueError:
+        return {'error': 'Wrong Authorization header value'}, 400
+
+    if auth_type != 'Bearer':
+        return {'error': 'Wrong Authorization type'}, 400
 
     try:
         data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
@@ -30,8 +37,6 @@ def verify_token():
     except UserIdMissingTokenError as e:
         app.logger.warning(e)
         return {'error': str(e)}, 400
-
-    del request.json['token']
 
 def get_auth_token(user_id):
     encoded_jwt = jwt.encode(
