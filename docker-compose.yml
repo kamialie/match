@@ -13,10 +13,6 @@ services:
       - frontend
 
   db:
-    environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: matcha
     networks:
       - backend
     restart: always

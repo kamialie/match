@@ -5,23 +5,27 @@ services:
     build:
       context: ./backend
       dockerfile: dockerfiles/dev/Dockerfile
-    volumes:
-      - ./backend:/home/backend
+    env_file:
+      - .env_dev
     ports:
       - "5000:5000"
+    volumes:
+      - ./backend:/home/backend
 
   frontend:
     build:
       context: ./frontend
       dockerfile: dockerfiles/dev/Dockerfile
+    ports:
+      - "3000:8080"
     volumes:
       - ./frontend:/home/frontend
     tty: true
-    ports:
-      - "3000:8080"
 
   db:
     image: postgres:12
+    env_file:
+      - .env_dev
     ports:
       - "5432:5432"
     volumes:
