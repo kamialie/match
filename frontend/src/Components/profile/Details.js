@@ -1,14 +1,14 @@
 import React from 'react';
 
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
-import {accountService} from '../../services/account.service';
+import { accountService } from '../../services/account.service';
 import Dropzone from '../dropzone/Dropzone';
 import MyMap from '../mymap/MyMap';
 import Avatar from './avatar/Avatar';
 
-function Details({match}) {
-    const {path} = match;
+function Details({ match }) {
+    const { path } = match;
     const user = accountService.userValue;
 
     const getUserName = () => {
@@ -16,11 +16,11 @@ function Details({match}) {
     };
 
     return (
-        <div className='profile-container'>
-            <h1 className='profile-title'>My Profile</h1>
-            <div className='profile'>
+        <div className="profile-container">
+            <h1 className="profile-title">My Profile</h1>
+            <div className="profile">
                 <Avatar />
-                <div className='profile-main-info'>
+                <div className="profile-main-info">
                     <p>User full name: {getUserName()}</p>
                     <p>Username: {'Rgyles'}</p>
                     <p>Email: {user.email}</p>
@@ -33,4 +33,4 @@ function Details({match}) {
     );
 }
 
-export {Details};
+export { Details };

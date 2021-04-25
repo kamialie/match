@@ -1,49 +1,48 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-import {alertService, AlertType} from '../services/alert.service';
-import {history} from '../helpers/history';
+import { alertService, AlertType } from '../services/alert.service';
+import { history } from '../helpers/history';
 
 const propTypes = {
     id: PropTypes.string,
-    fade: PropTypes.bool
+    fade: PropTypes.bool,
 };
 
 const defaultProps = {
     id: 'default-alert',
-    fade: true
+    fade: true,
 };
 
-function Alert({id, fade}) {
+function Alert({ id, fade }) {
     const [alerts, setAlerts] = useState([]);
 
     useEffect(() => {
         // subscribe to new alert notifications
-        const subscription = alertService.onAlert(id)
-            .subscribe((alert) => {
-                // clear alerts when an empty alert is received
-                if (!alert.message) {
-                    setAlerts((alerts) => {
-                        // filter out alerts without 'keepAfterRouteChange' flag
-                        const filteredAlerts = alerts.filter((x) => x.keepAfterRouteChange);
+        const subscription = alertService.onAlert(id).subscribe(alert => {
+            // clear alerts when an empty alert is received
+            if (!alert.message) {
+                setAlerts(alerts => {
+                    // filter out alerts without 'keepAfterRouteChange' flag
+                    const filteredAlerts = alerts.filter(x => x.keepAfterRouteChange);
 
-                        // remove 'keepAfterRouteChange' flag on the rest
-                        filteredAlerts.forEach((x) => delete x.keepAfterRouteChange);
-                        return filteredAlerts;
-                    });
-                } else {
-                    // add alert to array
-                    setAlerts((alerts) => ([...alerts, alert]));
+                    // remove 'keepAfterRouteChange' flag on the rest
+                    filteredAlerts.forEach(x => delete x.keepAfterRouteChange);
+                    return filteredAlerts;
+                });
+            } else {
+                // add alert to array
+                setAlerts(alerts => [...alerts, alert]);
 
-                    // auto close alert if required
-                    if (alert.autoClose) {
-                        setTimeout(() => removeAlert(alert), 3000);
-                    }
+                // auto close alert if required
+                if (alert.autoClose) {
+                    setTimeout(() => removeAlert(alert), 3000);
                 }
-            });
+            }
+        });
 
         // clear alerts on location change
-        const historyUnlisten = history.listen(({pathname}) => {
+        const historyUnlisten = history.listen(({ pathname }) => {
             // don't clear if pathname has trailing slash because this will be auto redirected again
             if (pathname.endsWith('/')) return;
 
@@ -61,16 +60,16 @@ function Alert({id, fade}) {
     function removeAlert(alert) {
         if (fade) {
             // fade out alert
-            const alertWithFade = {...alert, fade: true};
-            setAlerts((alerts) => alerts.map((x) => (x === alert ? alertWithFade : x)));
+            const alertWithFade = { ...alert, fade: true };
+            setAlerts(alerts => alerts.map(x => (x === alert ? alertWithFade : x)));
 
             // remove alert after faded out
             setTimeout(() => {
-                setAlerts((alerts) => alerts.filter((x) => x !== alertWithFade));
+                setAlerts(alerts => alerts.filter(x => x !== alertWithFade));
             }, 250);
         } else {
             // remove alert
-            setAlerts((alerts) => alerts.filter((x) => x !== alert));
+            setAlerts(alerts => alerts.filter(x => x !== alert));
         }
     }
 
@@ -83,7 +82,7 @@ function Alert({id, fade}) {
             [AlertType.Success]: 'alert alert-success',
             [AlertType.Error]: 'alert alert-danger',
             [AlertType.Info]: 'alert alert-info',
-            [AlertType.Warning]: 'alert alert-warning'
+            [AlertType.Warning]: 'alert alert-warning',
         };
 
         classes.push(alertTypeClass[alert.type]);
@@ -98,11 +97,13 @@ function Alert({id, fade}) {
     if (!alerts.length) return null;
 
     return (
-        <div className='container'>
-            <div className='m-3'>
+        <div className="container">
+            <div className="m-3">
                 {alerts.map((alert, index) => (
                     <div key={index} className={cssClasses(alert)}>
-                        <a className='close' onClick={() => removeAlert(alert)}>&times;</a>
+                        <a className="close" onClick={() => removeAlert(alert)}>
+                            &times;
+                        </a>
                         <span> {alert.message.toString()} </span>
                     </div>
                 ))}
@@ -113,4 +114,4 @@ function Alert({id, fade}) {
 
 Alert.propTypes = propTypes;
 Alert.defaultProps = defaultProps;
-export {Alert};
+export { Alert };

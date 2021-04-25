@@ -3,11 +3,11 @@ const webpack = require('webpack');
 const autoprefixer = require('autoprefixer');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const settings = {
     distPath: path.join(__dirname, 'dist'),
-    srcPath: path.join(__dirname, 'src')
+    srcPath: path.join(__dirname, 'src'),
 };
 
 function srcPathExtend(subpath) {
@@ -21,14 +21,14 @@ module.exports = (/* env, options */) => ({
     output: {
         path: settings.distPath,
         filename: 'bundle.js',
-        publicPath: '/'
+        publicPath: '/',
     },
     devServer: {
-        historyApiFallback: true
+        historyApiFallback: true,
     },
-    devtool: isDevMode ? 'source-mymap' : false,
+    devtool: isDevMode ? '#eval-source-map' : false,
     resolve: {
-        extensions: ['.js']
+        extensions: ['.js'],
     },
     module: {
         rules: [
@@ -42,8 +42,8 @@ module.exports = (/* env, options */) => ({
                 test: /\.js$/,
                 exclude: /node_modules/,
                 use: {
-                    loader: 'babel-loader'
-                }
+                    loader: 'babel-loader',
+                },
             },
             {
                 test: /\.s?[ac]ss$/i,
@@ -53,12 +53,10 @@ module.exports = (/* env, options */) => ({
                     {
                         loader: 'postcss-loader',
                         options: {
-                            plugins: [
-                                autoprefixer()
-                            ]
-                        }
-                    }
-                ]
+                            plugins: [autoprefixer()],
+                        },
+                    },
+                ],
             },
             {
                 test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
@@ -66,9 +64,9 @@ module.exports = (/* env, options */) => ({
                     loader: 'file-loader',
                     options: {
                         name: '[name].[ext]',
-                        outputPath: 'assets/fonts'
-                    }
-                }
+                        outputPath: 'assets/fonts',
+                    },
+                },
             },
             {
                 test: /\.(jpe?g|png|gif|svg|ico)$/i,
@@ -77,23 +75,23 @@ module.exports = (/* env, options */) => ({
                         loader: 'file-loader',
                         options: {
                             name: '[name].[ext]',
-                            outputPath: 'assets/images'
-                        }
-                    }
-                ]
-            }
-        ]
+                            outputPath: 'assets/images',
+                        },
+                    },
+                ],
+            },
+        ],
     },
     plugins: [
         new CleanWebpackPlugin(),
         new MiniCssExtractPlugin({
-            filename: '[name].css'
+            filename: '[name].css',
         }),
         new HtmlWebpackPlugin({
-            template: srcPathExtend('index.html')
+            template: srcPathExtend('index.html'),
         }),
         new webpack.DefinePlugin({
-            NODE_ENV: JSON.stringify(process.env.NODE_ENV)
-        })
-    ]
+            NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+        }),
+    ],
 });

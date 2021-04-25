@@ -1,31 +1,30 @@
-import React, {useState, useEffect} from 'react';
-import {Link} from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import queryString from 'query-string';
-import {
-    Formik, Field, Form, ErrorMessage
-} from 'formik';
+import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 
-import {accountService} from '../../services/account.service';
-import {alertService} from '../../services/alert.service';
+import { accountService } from '../../services/account.service';
+import { alertService } from '../../services/alert.service';
 
-function ResetPassword({history}) {
+function ResetPassword({ history }) {
     const TokenStatus = {
         Validating: 'Validating',
         Valid: 'Valid',
-        Invalid: 'Invalid'
+        Invalid: 'Invalid',
     };
 
     const [token, setToken] = useState(null);
     const [tokenStatus, setTokenStatus] = useState(TokenStatus.Validating);
 
     useEffect(() => {
-        const {token} = queryString.parse(location.search);
+        const { token } = queryString.parse(location.search);
 
         // remove token from url to prevent http referer leakage
         history.replace(location.pathname);
 
-        accountService.validateResetToken(token)
+        accountService
+            .validateResetToken(token)
             .then(() => {
                 setToken(token);
                 setTokenStatus(TokenStatus.Valid);
@@ -38,7 +37,7 @@ function ResetPassword({history}) {
     function getForm() {
         const initialValues = {
             password: '',
-            confirmPassword: ''
+            confirmPassword: '',
         };
 
         const validationSchema = Yup.object().shape({
@@ -47,51 +46,80 @@ function ResetPassword({history}) {
                 .required('Password is required'),
             confirmPassword: Yup.string()
                 .oneOf([Yup.ref('password'), null], 'Passwords must match')
-                .required('Confirm Password is required')
+                .required('Confirm Password is required'),
         });
 
-        function onSubmit({password, confirmPassword}, {setSubmitting}) {
+        function onSubmit({ password, confirmPassword }, { setSubmitting }) {
             alertService.clear();
-            accountService.resetPassword({token, password, confirmPassword})
+            accountService
+                .resetPassword({ token, password, confirmPassword })
                 .then(() => {
-                    alertService.success('Password reset successful, you can now login', {keepAfterRouteChange: true});
+                    alertService.success('Password reset successful, you can now login', {
+                        keepAfterRouteChange: true,
+                    });
                     history.push('login');
                 })
-                .catch((error) => {
+                .catch(error => {
                     setSubmitting(false);
                     alertService.error(error);
                 });
         }
 
         return (
-            <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
-                {({errors, touched, isSubmitting}) => (
+            <Formik
+                initialValues={initialValues}
+                validationSchema={validationSchema}
+                onSubmit={onSubmit}
+            >
+                {({ errors, touched, isSubmitting }) => (
                     <Form>
-                        <div className='form-group'>
-                            <label htmlFor='password'>Password</label>
+                        <div className="form-group">
+                            <label htmlFor="password">Password</label>
                             <Field
-                                name='password'
-                                type='password'
-                                className={`form-control${errors.password && touched.password ? ' is-invalid' : ''}`}
+                                name="password"
+                                type="password"
+                                className={`form-control${
+                                    errors.password && touched.password ? ' is-invalid' : ''
+                                }`}
                             />
-                            <ErrorMessage name='password' component='div' className='invalid-feedback' />
+                            <ErrorMessage
+                                name="password"
+                                component="div"
+                                className="invalid-feedback"
+                            />
                         </div>
-                        <div className='form-group'>
-                            <label htmlFor='confirmPassword'>Confirm Password</label>
+                        <div className="form-group">
+                            <label htmlFor="confirmPassword">Confirm Password</label>
                             <Field
-                                name='confirmPassword'
-                                type='password'
-                                className={`form-control${errors.confirmPassword && touched.confirmPassword ? ' is-invalid' : ''}`}
+                                name="confirmPassword"
+                                type="password"
+                                className={`form-control${
+                                    errors.confirmPassword && touched.confirmPassword
+                                        ? ' is-invalid'
+                                        : ''
+                                }`}
                             />
-                            <ErrorMessage name='confirmPassword' component='div' className='invalid-feedback' />
+                            <ErrorMessage
+                                name="confirmPassword"
+                                component="div"
+                                className="invalid-feedback"
+                            />
                         </div>
-                        <div className='form-row'>
-                            <div className='form-group col'>
-                                <button type='submit' disabled={isSubmitting} className='btn btn-primary'>
-                                    {isSubmitting && <span className='spinner-border spinner-border-sm mr-1' />}
+                        <div className="form-row">
+                            <div className="form-group col">
+                                <button
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    className="btn btn-primary"
+                                >
+                                    {isSubmitting && (
+                                        <span className="spinner-border spinner-border-sm mr-1" />
+                                    )}
                                     Reset Password
                                 </button>
-                                <Link to='login' className='btn btn-link'>Cancel</Link>
+                                <Link to="login" className="btn btn-link">
+                                    Cancel
+                                </Link>
                             </div>
                         </div>
                     </Form>
@@ -107,11 +135,8 @@ function ResetPassword({history}) {
             case TokenStatus.Invalid:
                 return (
                     <div>
-                        Token validation failed, if the token has expired you can get a new one at the
-                        {' '}
-                        <Link to='forgot-password'>forgot password</Link>
-                        {' '}
-                        page.
+                        Token validation failed, if the token has expired you can get a new one at
+                        the <Link to="forgot-password">forgot password</Link> page.
                     </div>
                 );
             case TokenStatus.Validating:
@@ -121,10 +146,10 @@ function ResetPassword({history}) {
 
     return (
         <div>
-            <h3 className='card-header'>Reset Password</h3>
-            <div className='card-body'>{getBody()}</div>
+            <h3 className="card-header">Reset Password</h3>
+            <div className="card-body">{getBody()}</div>
         </div>
     );
 }
 
-export {ResetPassword};
+export { ResetPassword };

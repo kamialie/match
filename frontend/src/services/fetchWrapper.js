@@ -1,17 +1,17 @@
 import config from '../config';
-import {accountService} from './account.service';
+import { accountService } from './account.service';
 
 export const fetchWrapper = {
     get,
     post,
     put,
-    delete: _delete
+    delete: _delete,
 };
 
 function get(url) {
     const requestOptions = {
         method: 'GET',
-        headers: authHeader(url)
+        headers: authHeader(url),
     };
     return fetch(url, requestOptions).then(handleResponse);
 }
@@ -19,9 +19,9 @@ function get(url) {
 function post(url, body) {
     const requestOptions = {
         method: 'POST',
-        headers: {'Content-Type': 'application/json', ...authHeader(url)},
+        headers: { 'Content-Type': 'application/json', ...authHeader(url) },
         credentials: 'include',
-        body: JSON.stringify(body)
+        body: JSON.stringify(body),
     };
     return fetch(url, requestOptions).then(handleResponse);
 }
@@ -29,8 +29,8 @@ function post(url, body) {
 function put(url, body) {
     const requestOptions = {
         method: 'PUT',
-        headers: {'Content-Type': 'application/json', ...authHeader(url)},
-        body: JSON.stringify(body)
+        headers: { 'Content-Type': 'application/json', ...authHeader(url) },
+        body: JSON.stringify(body),
     };
     return fetch(url, requestOptions).then(handleResponse);
 }
@@ -39,7 +39,7 @@ function put(url, body) {
 function _delete(url) {
     const requestOptions = {
         method: 'DELETE',
-        headers: authHeader(url)
+        headers: authHeader(url),
     };
     return fetch(url, requestOptions).then(handleResponse);
 }
@@ -52,13 +52,13 @@ function authHeader(url) {
     const isLoggedIn = user && user.jwtToken;
     const isApiUrl = url.startsWith(config.host);
     if (isLoggedIn && isApiUrl) {
-        return {Authorization: `Bearer ${user.jwtToken}`};
+        return { Authorization: `Authorization ${user.jwtToken}` };
     }
     return {};
 }
 
 function handleResponse(response) {
-    return response.text().then((text) => {
+    return response.text().then(text => {
         const data = text && JSON.parse(text);
 
         if (!response.ok) {
