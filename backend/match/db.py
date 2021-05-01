@@ -82,7 +82,7 @@ def init_db_command():
 
 
 from flask_mail import Mail, Message
-from matcha.handlers.auth import create_token
+from match.handlers.auth import create_token
 
 @click.command('email')
 @with_appcontext

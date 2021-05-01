@@ -1,6 +1,6 @@
 FROM python:3.8.5
 
-ENV FLASK_APP=matcha
+ENV FLASK_APP=match
 ENV FLASK_ENV=development
 
 WORKDIR /app

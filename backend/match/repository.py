@@ -1,5 +1,5 @@
-from matcha.objects.user import User
-from matcha.db import get_engine
+from match.objects.user import User
+from match.db import get_engine
 
 from sqlalchemy import text
 

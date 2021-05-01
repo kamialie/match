@@ -1,10 +1,10 @@
 from werkzeug.security import generate_password_hash
 from flask import current_app as app
 from flask_mail import Mail, Message
-from matcha.handlers.auth import create_token
-from matcha.objects.user import User
-from matcha.repository import UserRepository
-from matcha.exceptions.user import UserAlreadyExistsError
+from match.handlers.auth import create_token
+from match.objects.user import User
+from match.repository import UserRepository
+from match.exceptions.user import UserAlreadyExistsError
 
 class RegistrationHandler:
     def __init__(self):

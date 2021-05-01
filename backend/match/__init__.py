@@ -44,7 +44,7 @@ def create_app():
     from . import init_db
     init_db.run(app)
 
-    from matcha.endpoints import user, registration, auth
+    from match.endpoints import user, registration, auth
     app.register_blueprint(registration.bp)
     app.register_blueprint(user.bp)
     app.register_blueprint(auth.bp)

@@ -1,7 +1,7 @@
 from flask import Blueprint, request, current_app as app, g
-from matcha.handlers.user import UserHandler
-from matcha.handlers.auth import verify_token
-from matcha.exceptions.user import UserHandlerError
+from match.handlers.user import UserHandler
+from match.handlers.auth import verify_token
+from match.exceptions.user import UserHandlerError
 
 bp = Blueprint('user', __name__, url_prefix='/user')
 bp.before_request(verify_token)

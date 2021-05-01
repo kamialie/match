@@ -1,8 +1,8 @@
 from flask import Blueprint, request, current_app as app, g
 from jwt import InvalidTokenError
-from matcha.handlers.registration import RegistrationHandler
-from matcha.handlers.auth import decode_token
-from matcha.exceptions.user import UserHandlerError
+from match.handlers.registration import RegistrationHandler
+from match.handlers.auth import decode_token
+from match.exceptions.user import UserHandlerError
 
 bp = Blueprint('registration', __name__, url_prefix='/register')
 

@@ -3,7 +3,7 @@ import click
 
 from flask import current_app as app
 from flask.cli import with_appcontext
-from matcha.handlers.user import UserHandler
+from match.handlers.user import UserHandler
 
 def init_db_contents():
     with app.open_resource('data.json') as f:

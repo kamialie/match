@@ -1,8 +1,8 @@
 from werkzeug.security import generate_password_hash
-from matcha.handlers.auth import verify_password
-from matcha.repository import UserRepository
-from matcha.objects.user import User
-from matcha.exceptions.user import UserIdNotFoundError, WrongPasswordError, UserAlreadyExistsError
+from match.handlers.auth import verify_password
+from match.repository import UserRepository
+from match.objects.user import User
+from match.exceptions.user import UserIdNotFoundError, WrongPasswordError, UserAlreadyExistsError
 
 class UserHandler:
     """Handler for user related operations"""

@@ -1,12 +1,13 @@
 from flask import Blueprint, request, current_app as app
-from matcha.handlers.auth import AuthHandler
-from matcha.exceptions.user import UserHandlerError
+from match.handlers.auth import AuthHandler
+from match.exceptions.user import UserHandlerError
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 @bp.route('/login', methods=('POST',))
 def login():
     request_body = request.json
+    app.logger.info(f'secret - {app.config["SECRET_KEY"]}')
 
     if request.method == 'POST':
         #TODO move to helper function

@@ -3,9 +3,9 @@ import datetime
 
 from flask import request, current_app as app, g
 from werkzeug.security import check_password_hash
-from matcha.repository import UserRepository
-from matcha.exceptions.user import UserNameNotFoundError, WrongPasswordError
-from matcha.exceptions.auth import UserIdMissingTokenError
+from match.repository import UserRepository
+from match.exceptions.user import UserNameNotFoundError, WrongPasswordError
+from match.exceptions.auth import UserIdMissingTokenError
 
 def verify_password(password_hash, password):
     return check_password_hash(password_hash, password)
