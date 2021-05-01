@@ -56,16 +56,18 @@ class UserRepository(Repository):
 
     def create(self, user: User):
         self._engine.execute(
-            text('INSERT INTO Users (username, password, first_name, last_name, email) VALUES (:u, :p, :f, :l, :e)'),
-            u=user.name, p=user.password, f=user.first_name, l=user.last_name, e=user.email
+            text('INSERT INTO Users (enabled, username, password, first_name, last_name, email) '
+                 'VALUES (:e, :u, :p, :f, :l, :em)'),
+            e=user.enabled, u=user.name, p=user.password, f=user.first_name, l=user.last_name, em=user.email
         )
 
     def initialize(self, user: User):
         self._engine.execute(
-            text('INSERT INTO Users (username, password, first_name, last_name, email, gender, preference, biography) '
-                 'VALUES (:u, :p, :f, :l, :e, :g, :pr, :b)'),
-            u=user.name, p=user.password, f=user.first_name, l=user.last_name, e=user.email, g=user.gender,
-            pr=user.preference, b=user.biography
+            text('INSERT INTO Users (enabled, username, password, first_name, last_name,'
+                 'email, gender, preference, biography) '
+                 'VALUES (:e, :u, :p, :f, :l, :e, :g, :pr, :b)'),
+            e=user.enabled, u=user.name, p=user.password, f=user.first_name, l=user.last_name, em=user.email,
+            g=user.gender, pr=user.preference, b=user.biography
         )
 
     def update(self, user: User):
@@ -75,6 +77,11 @@ class UserRepository(Repository):
                  'gender = :g, preference = :pr, biography = :b WHERE user_id = :u'),
             u=user.id, n=user.name, p=user.password, f=user.first_name, l=user.last_name, e=user.email,
             g=user.gender, pr=user.preference, b=user.biography
+        )
+
+    def confirm(self, user_id):
+        self._engine.execute(
+            text('UPDATE Users SET enabled = TRUE WHERE user_id = :u'), u=user_id
         )
 
     def delete(self, user_id):

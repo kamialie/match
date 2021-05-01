@@ -1,7 +1,5 @@
-from os import environ
+from os  import environ
 from sqlalchemy.engine.url import URL
-
-SECRET_KEY = 'dev'
 
 DATABASE = URL(
     drivername='postgres',
@@ -11,10 +9,11 @@ DATABASE = URL(
     database=environ['POSTGRES_DB']
 )
 
-# Flask Mail configuration
-MAIL_SERVER = 'smtp.yandex.com',
-MAIL_PORT = 465,
-MAIL_USERNAME = 'tanteprix@yandex.ru',
-MAIL_PASSWORD = 'VRemyasnova8',
-MAIL_USE_TLS = False,
+MAIL_SERVER = environ['MAIL_SERVER']
+MAIL_PORT = 465
+MAIL_USERNAME = environ['MAIL_USERNAME']
+MAIL_PASSWORD = environ['MAIL_PASSWORD']
+MAIL_USE_TLS = False
 MAIL_USE_SSL = True
+
+HOST = environ['HOST']

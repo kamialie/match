@@ -2,30 +2,33 @@ version: "3.3"
 
 services:
   backend:
+    image: match_backend:dev
     build:
       context: ./backend
       dockerfile: dockerfiles/dev/Dockerfile
     env_file:
-      - .env_dev
+      - backend/matcha/.env_dev
+      - backend/matcha/.env_db_dev
     ports:
       - "5000:5000"
     volumes:
-      - ./backend:/home/backend
+      - ./backend:/app
 
   frontend:
+    image: match_frontend:dev
     build:
       context: ./frontend
       dockerfile: dockerfiles/dev/Dockerfile
     ports:
       - "3000:8080"
     volumes:
-      - ./frontend:/home/frontend
+      - ./frontend:/app
     tty: true
 
   db:
     image: postgres:12
     env_file:
-      - .env_dev
+      - backend/matcha/.env_db_dev
     ports:
       - "5432:5432"
     volumes:

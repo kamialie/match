@@ -1,13 +1,11 @@
 FROM python:3.8.5
 
-ENV FLASK_APP "matcha"
-ENV FLASK_ENV "development"
+ENV FLASK_APP=matcha
+ENV FLASK_ENV=development
 
-WORKDIR /home/backend
-
-COPY requirements.txt ./
-
-RUN pip install -r requirements.txt
+WORKDIR /app
+COPY requirements_dev.txt ./
+RUN pip install -r requirements_dev.txt
 
 ENTRYPOINT flask init-db \
             && flask init-db-contents \

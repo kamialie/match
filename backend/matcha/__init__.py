@@ -8,15 +8,18 @@ def create_app():
     #app = Flask(__name__, instance_relative_config=True)
     app = Flask(__name__)
 
-    # handle cors policy
-    CORS(app, supports_credentials=True)
+    # configurations
+    app.config.from_pyfile('config.py')
+    if os.environ['FLASK_ENV'] == 'development':
+        app.config['SECRET_KEY'] = 'dev'
+        app.testing = True
 
-    # inject logging middleware
-    @app.before_request
-    def before_request_func():
-        app.logger.info('Request body - %s', request.json)
-
-    app.config.from_pyfile('dev_config.py')
+    # app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+    # app.config['MAIL_PORT'] = 465
+    # app.config['MAIL_USERNAME'] = 'rgyles.school21@gmail.com'
+    # app.config['MAIL_PASSWORD'] = 'sIMPle_one'
+    # app.config['MAIL_USE_TLS'] = False
+    # app.config['MAIL_USE_SSL'] = True
 
     # ensure the instance folder exists
     try:
@@ -24,10 +27,17 @@ def create_app():
     except OSError:
         pass
 
-    # a simple page that says hello
+    # handle cors policy
+    CORS(app, supports_credentials=True)
+
     @app.route('/')
     def hello():
-        return 'Hello, World!'
+        return 'Hello world!'
+
+    # inject logging middleware
+    @app.before_request
+    def before_request_func():
+        app.logger.info('Request body - %s', request.json)
 
     from . import db
     db.init_app(app)
@@ -46,3 +56,19 @@ def create_app():
     #app.register_blueprint(block.bp)
 
     return app
+
+# from functools import wraps
+# from flask import g, request, redirect, url_for
+#
+# def log_request(f):
+#     @wraps(f)
+#     def decorated_function(*args, **kwargs):
+#         if g.user is None:
+#             return redirect(url_for('login', next=request.url))
+#         return f(*args, **kwargs)
+#     return decorated_function
+#
+# @login_required
+# def secret_page():
+#     pass
+

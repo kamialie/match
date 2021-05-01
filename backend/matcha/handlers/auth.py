@@ -3,7 +3,6 @@ import datetime
 
 from flask import request, current_app as app, g
 from werkzeug.security import check_password_hash
-from jwt import ExpiredSignatureError, InvalidTokenError
 from matcha.repository import UserRepository
 from matcha.exceptions.user import UserNameNotFoundError, WrongPasswordError
 from matcha.exceptions.auth import UserIdMissingTokenError
@@ -18,31 +17,30 @@ def verify_token():
     try:
         auth_type, token = authorization.split()
     except ValueError:
-        return {'error': 'Wrong Authorization header value'}, 400
+        return {'error': 'Invalid Authorization header value'}, 400
 
     if auth_type != 'Bearer':
-        return {'error': 'Wrong Authorization type'}, 400
+        return {'error': 'Incorrect Authorization header type'}, 400
 
     try:
-        data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
-    except ExpiredSignatureError as e:
-        app.logger.warning(e)
-        return {'error': f'Invalid token - {e}'}, 400
-    except InvalidTokenError as e:
-        app.logger.warning(e)
-        return {'error': f'Invalid token - {e}'}, 400
+        decode_token(token)
+    except jwt.InvalidTokenError as e:
+        msg = f'Invalid token - {e}'
+        app.logger.warning(msg)
+        return {'error': msg}, 400
 
-    try:
-        g.user_id = data['user_id']
-    except UserIdMissingTokenError as e:
-        app.logger.warning(e)
-        return {'error': str(e)}, 400
+#TODO test with app.secret_key
+def decode_token(token):
+    data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+    g.user_id = data.get('user_id')
+    if g.user_id is None:
+        raise UserIdMissingTokenError
 
-def get_auth_token(user_id):
+def create_token(user_id, minutes=10):
     encoded_jwt = jwt.encode(
         {
             "user_id": user_id,
-            "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=10)
+            "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=minutes)
         },
         app.config['SECRET_KEY'], algorithm="HS256"
     )
@@ -61,7 +59,7 @@ class AuthHandler:
         if not verify_password(user.password, password):
             raise WrongPasswordError(username)
         # TODO switch to 3.9 for more elegant dict merge
-        return {**user.as_dict(), **{'token': get_auth_token(user.id)}}
+        return {**user.as_dict(), **{'token': create_token(user.id)}}
 
     def logout(self):
         pass

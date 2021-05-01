@@ -1,7 +1,7 @@
 {
     "users" : [
         {
-            "user_id": 0,
+            "enabled": true,
             "username": "root",
             "password": "pass",
             "first_name": "root",
@@ -15,7 +15,7 @@
             ]
         },
         {
-            "user_id": 0,
+            "enabled": true,
             "username": "kam",
             "password": "pasw",
             "first_name": "kamil",
@@ -29,7 +29,7 @@
             ]
         },
         {
-            "user_id": 0,
+            "enabled": true,
             "username": "sve",
             "password": "paso",
             "first_name": "sveva",
@@ -43,7 +43,7 @@
             ]
         },
         {
-            "user_id": 0,
+            "enabled": false,
             "username": "vile",
             "password": "psss",
             "first_name": "vilena",

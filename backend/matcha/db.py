@@ -1,9 +1,7 @@
 import click
-#import json
 
 from flask import current_app as app, g
 from flask.cli import with_appcontext
-
 from sqlalchemy import create_engine, text
 
 #from matcha.db_methods import register_user, get_user_id, update_profile
@@ -34,13 +32,11 @@ def get_engine():
 
     return g.engine
 
-
 def close_engine(e=None):
     engine = g.pop('engine', None)
 
     if engine is not None:
         engine.dispose()
-
 
 def init_db():
     engine = get_engine()
@@ -85,14 +81,25 @@ def init_db_command():
     app.logger.info('Initialized the database')
 
 
-# @click.command('init-db-contents')
-# @with_appcontext
-# def init_db_contents_command():
-#     """Fill in data in fresh database"""
-#     init_db_contents()
-#     click.echo('Initialized the database contents')
+from flask_mail import Mail, Message
+from matcha.handlers.auth import create_token
+
+@click.command('email')
+@with_appcontext
+def send_email():
+    app.logger.info('Sent email')
+    app.logger.info(app.config)
+    mail = Mail(app)
+    msg = Message("Hello",
+                  sender=app.config['MAIL_USERNAME'],
+                  recipients=["tanteprix@yandex.ru"])
+
+    token = create_token(1)
+    msg.body = f"Hello Flask message sent from Flask-Mail - http://{app.config['HOST']}/confirm/{token}"
+    mail.send(msg)
 
 
-def init_app(app):
-    app.teardown_appcontext(close_engine)
-    app.cli.add_command(init_db_command)
+def init_app(flask_app):
+    flask_app.teardown_appcontext(close_engine)
+    flask_app.cli.add_command(init_db_command)
+    flask_app.cli.add_command(send_email)
