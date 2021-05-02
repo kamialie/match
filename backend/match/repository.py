@@ -9,6 +9,10 @@ class Repository:
         # TODO wrap in try except
         self._engine = get_engine()
 
+    #TODO double check engine creation/deletion
+    # def __del__(self):
+    #     self._engine =
+
 class UserRepository(Repository):
     """Repository for User object related operations"""
 
@@ -55,17 +59,19 @@ class UserRepository(Repository):
         return None
 
     def create(self, user: User):
-        self._engine.execute(
+        result = self._engine.execute(
             text('INSERT INTO Users (enabled, username, password, first_name, last_name, email) '
-                 'VALUES (:e, :u, :p, :f, :l, :em)'),
+                 'VALUES (:e, :u, :p, :f, :l, :em) RETURNING user_id;'),
             e=user.enabled, u=user.name, p=user.password, f=user.first_name, l=user.last_name, em=user.email
-        )
+        ).fetchone()
+
+        return result.user_id
 
     def initialize(self, user: User):
         self._engine.execute(
             text('INSERT INTO Users (enabled, username, password, first_name, last_name,'
                  'email, gender, preference, biography) '
-                 'VALUES (:e, :u, :p, :f, :l, :e, :g, :pr, :b)'),
+                 'VALUES (:e, :u, :p, :f, :l, :em, :g, :pr, :b)'),
             e=user.enabled, u=user.name, p=user.password, f=user.first_name, l=user.last_name, em=user.email,
             g=user.gender, pr=user.preference, b=user.biography
         )

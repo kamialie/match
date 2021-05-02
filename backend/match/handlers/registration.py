@@ -17,18 +17,16 @@ class RegistrationHandler:
             raise UserAlreadyExistsError(user.name)
 
         user.password = generate_password_hash(user.password)
-        self._userRepository.create(user)
+        user_id = self._userRepository.create(user)
 
         # TODO send confirmation link to email
         app.logger.info('Sent email')
         # app.logger.info(app.config)
         mail = Mail(app)
-        msg = Message("Hello",
-                      sender=app.config['MAIL_USERNAME'],
-                      recipients=["tanteprix@yandex.ru"])
-        # recipients = [user.email])
+        msg = Message("Hello", sender=app.config['MAIL_USERNAME'], recipients=[user.email])
+        # recipients=["tanteprix@yandex.ru"])
 
-        token = create_token(1)
+        token = create_token(user_id)
         app.logger.info(f'token - {token}')
         msg.body = f"Hello Flask message sent from Flask-Mail - http://{app.config['HOST']}/confirm/{token}"
         mail.send(msg)
