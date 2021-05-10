@@ -16,6 +16,25 @@ services:
     volumes:
       - ./backend:/app
 
+  test:
+    image: match_backend:test
+    build:
+      context: ./backend
+      dockerfile: dockerfiles/test/Dockerfile
+    entrypoint: ["sleep", "infinity"]
+    environment:
+      FLASK_APP: match
+      FLASK_ENV: development
+    env_file:
+      - backend/match/.env_dev
+      - backend/match/.env_db_dev
+    networks:
+      - backend
+    ports:
+      - "5001:5000"
+    volumes:
+      - ./backend:/app
+
   frontend:
     image: match_frontend:dev
     build:

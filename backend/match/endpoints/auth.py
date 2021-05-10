@@ -22,7 +22,7 @@ def login():
             app.logger.warning(e.args)
             return {'error': str(e)}, 400
         except Exception as e:
-            app.logger.warning(e.args)
+            app.logger.error(e.args)
             return {'error': 'Internal error'}, 500
 
         return user_data_json, 200

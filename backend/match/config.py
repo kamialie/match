@@ -1,6 +1,8 @@
 from os  import environ
 from sqlalchemy.engine.url import URL
 
+SECRET_KEY = environ['SECRET_KEY']
+
 DATABASE = URL(
     drivername='postgres',
     host='db',

@@ -3,16 +3,15 @@ import os
 from flask import Flask, request
 from flask_cors import CORS
 
-def create_app():
+def create_app(test_config=None):
     # create and configure the app
     #app = Flask(__name__, instance_relative_config=True)
     app = Flask(__name__)
 
-    # configurations
-    app.config.from_pyfile('config.py')
-    if os.environ['FLASK_ENV'] == 'development':
-        app.config['SECRET_KEY'] = 'dev'
-        app.testing = True
+    if test_config is None:
+        app.config.from_pyfile('config.py')
+    else:
+        app.config.from_mapping(test_config)
 
     # app.config['MAIL_SERVER'] = 'smtp.gmail.com'
     # app.config['MAIL_PORT'] = 465
@@ -30,9 +29,9 @@ def create_app():
     # handle cors policy
     CORS(app, supports_credentials=True)
 
-    @app.route('/')
+    @app.route('/hello')
     def hello():
-        return 'Hello world!'
+        return 'Hello, World!'
 
     # inject logging middleware
     @app.before_request

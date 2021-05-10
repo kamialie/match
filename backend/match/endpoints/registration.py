@@ -32,6 +32,7 @@ def register():
 @bp.route('/confirm/<token>')
 def confirm_email(token):
 
+    #TODO probably move to handler
     app.logger.info(token)
     try:
         decode_token(token)
