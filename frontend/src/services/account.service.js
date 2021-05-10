@@ -25,6 +25,13 @@ export const accountService = {
 };
 
 function login(username, password) {
+    userSubject.next({
+        id: 1,
+        username: 'Kamil',
+        rating: 3.5,
+        status: 0,
+    });
+    return Promise.resolve();
     return fetchWrapper.post(`${baseUrl}/login`, { user_name: username, password }).then(user => {
         // publish user to subscribers and start timer to refresh token
         userSubject.next(user);
@@ -60,7 +67,8 @@ function generateJwtToken(user) {
 }
 
 function register(params) {
-    return fetchWrapper.post(`${baseUrl}/register`, params);
+    //return fetchWrapper.post(`${baseUrl}/register`, params);
+    return Promise.resolve();
 }
 
 function forgotPassword(email) {
@@ -76,15 +84,23 @@ function resetPassword({ token, password, confirmPassword }) {
 }
 
 function update(id, params) {
-    return fetchWrapper.put(`${baseUrl}/${id}`, params).then(user => {
-        // update stored user if the logged in user updated their own record
-        if (user.id === userSubject.value.id) {
-            // publish updated user to subscribers
-            user = { ...userSubject.value, ...user };
-            userSubject.next(user);
-        }
-        return user;
-    });
+    // return fetchWrapper.put(`${baseUrl}/${id}`, params).then(user => {
+    //     // update stored user if the logged in user updated their own record
+    //     if (user.id === userSubject.value.id) {
+    //         // publish updated user to subscribers
+    //         user = { ...userSubject.value, ...user };
+    //         userSubject.next(user);
+    //     }
+    //     return user;
+    // });
+
+    if (id === userSubject.value.id) {
+        // publish updated user to subscribers
+        const user = { ...userSubject.value, ...params, status: 1 };
+        userSubject.next(user);
+        return Promise.resolve();
+    }
+    return Promise.resolve();
 }
 
 function _delete(id) {

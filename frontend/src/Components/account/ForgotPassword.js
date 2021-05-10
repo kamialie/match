@@ -1,78 +1,112 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers';
+import * as yup from 'yup';
+import { Box, IconButton, Paper, Tooltip, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import ArrowBackIosOutlinedIcon from '@material-ui/icons/ArrowBackIosOutlined';
 import { accountService } from '../../services/account.service';
 import { alertService } from '../../services/alert.service';
+import { MainContainer } from '../common/MainContainer';
+import { Input } from '../common/Input';
+import { PrimaryButton } from '../common/PrimaryButton';
+import { Form } from '../common/Form';
 
-function ForgotPassword() {
-    const initialValues = {
-        email: '',
-    };
+const useStyles = makeStyles(theme => ({
+    root: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+    },
+    paper: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        padding: '2rem',
+        borderRadius: '1rem',
+        width: '100%',
+    },
+    backButton: {
+        marginLeft: '-2rem',
+    },
+    circle: {
+        marginLeft: '10px',
+    },
+}));
 
-    const validationSchema = Yup.object().shape({
-        email: Yup.string().email('Email is invalid').required('Email is required'),
+const schema = yup.object().shape({
+    email: yup.string().email('Email is invalid').required('Email is a required field'),
+});
+
+export const ForgotPassword = ({ history }) => {
+    const {
+        register,
+        handleSubmit,
+        errors,
+        formState: { isSubmitted, isValid },
+        reset,
+    } = useForm({
+        mode: 'onChange',
+        resolver: yupResolver(schema),
     });
 
-    function onSubmit({ email }, { setSubmitting }) {
+    const classes = useStyles();
+
+    const onBack = event => {
+        event.preventDefault();
+        history.push('./');
+    };
+
+    const onSubmit = data => {
         alertService.clear();
         accountService
-            .forgotPassword(email)
-            .then(() =>
-                alertService.success('Please check your email for password reset instructions')
-            )
-            .catch(error => alertService.error(error))
-            .finally(() => setSubmitting(false));
-    }
+            .forgotPassword(data.email)
+            .then(() => {
+                alertService.success('Please, check your email for password reset instructions', {
+                    keepAfterRouteChange: true,
+                });
+                history.push('./');
+            })
+            .catch(error => {
+                alertService.error(error);
+                reset();
+            });
+    };
 
     return (
-        <Formik
-            initialValues={initialValues}
-            validationSchema={validationSchema}
-            onSubmit={onSubmit}
-        >
-            {({ errors, touched, isSubmitting }) => (
-                <Form>
-                    <h3 className="card-header">Forgot Password</h3>
-                    <div className="card-body">
-                        <div className="form-group">
-                            <label htmlFor="email">Email</label>
-                            <Field
-                                name="email"
-                                type="text"
-                                className={`form-control${
-                                    errors.email && touched.email ? ' is-invalid' : ''
-                                }`}
-                            />
-                            <ErrorMessage
-                                name="email"
-                                component="div"
-                                className="invalid-feedback"
-                            />
-                        </div>
-                        <div className="form-row">
-                            <div className="form-group col">
-                                <button
-                                    type="submit"
-                                    disabled={isSubmitting}
-                                    className="btn btn-primary"
-                                >
-                                    {isSubmitting && (
-                                        <span className="spinner-border spinner-border-sm mr-1" />
-                                    )}
-                                    Submit
-                                </button>
-                                <Link to="login" className="btn btn-link">
-                                    Cancel
-                                </Link>
-                            </div>
-                        </div>
-                    </div>
+        <MainContainer>
+            <Paper className={classes.paper}>
+                <Box className={classes.root}>
+                    <Tooltip title="Move to login" placement="top">
+                        <IconButton
+                            color="primary"
+                            component="span"
+                            className={classes.backButton}
+                            onClick={event => onBack(event)}
+                        >
+                            <ArrowBackIosOutlinedIcon />
+                        </IconButton>
+                    </Tooltip>
+                    <Typography component="h2" variant="h5">
+                        Forgot Password
+                    </Typography>
+                </Box>
+                <Form onSubmit={handleSubmit(onSubmit)}>
+                    <Input
+                        ref={register}
+                        id="email"
+                        type="email"
+                        label="Email"
+                        name="email"
+                        error={!!errors.email}
+                        helperText={errors?.email?.message}
+                    />
+                    <PrimaryButton disabled={!isValid || isSubmitted} isLoading={isSubmitted}>
+                        Restore
+                    </PrimaryButton>
                 </Form>
-            )}
-        </Formik>
+            </Paper>
+        </MainContainer>
     );
-}
-
-export { ForgotPassword };
+};

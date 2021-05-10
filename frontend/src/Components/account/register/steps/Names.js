@@ -1,14 +1,10 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
-import { useData } from './RegisterDataContext';
-import Typography from '@material-ui/core/Typography';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers';
 import * as yup from 'yup';
-import { MainContainer } from '../../common/MainContainer';
-import { Form } from '../../common/Form';
-import { Input } from '../../common/Input';
-import { PrimaryButton } from '../../common/PrimaryButton';
+import { Form } from '../../../common/Form';
+import { Input } from '../../../common/Input';
+import { PrimaryButton } from '../../../common/PrimaryButton';
 
 const schema = yup.object().shape({
     firstName: yup
@@ -21,28 +17,16 @@ const schema = yup.object().shape({
         .required('Last name is a required field'),
 });
 
-export const RegisterStep1 = ({ match }) => {
-    const { setValues, data } = useData();
-    const history = useHistory();
+export const Names = ({ data, onNext }) => {
     const { register, handleSubmit, errors } = useForm({
         defaultValues: { firstName: data.firstName, lastName: data.lastName },
         mode: 'onBlur',
         resolver: yupResolver(schema),
     });
 
-    const { path } = match;
-
-    const onSubmit = data => {
-        history.push(`${path}step2`);
-        setValues(data);
-    };
-
     return (
-        <MainContainer>
-            <Typography component="h2" variant="h5">
-                🦄 Step 1
-            </Typography>
-            <Form onSubmit={handleSubmit(onSubmit)}>
+        <>
+            <Form onSubmit={handleSubmit(data => onNext(data))}>
                 <Input
                     ref={register}
                     id="firstName"
@@ -63,6 +47,6 @@ export const RegisterStep1 = ({ match }) => {
                 />
                 <PrimaryButton>Next</PrimaryButton>
             </Form>
-        </MainContainer>
+        </>
     );
 };

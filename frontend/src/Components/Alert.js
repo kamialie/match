@@ -1,21 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-
+import MuiAlert from '@material-ui/lab/Alert';
+import { Snackbar } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import { alertService, AlertType } from '../services/alert.service';
 import { history } from '../helpers/history';
 
-const propTypes = {
-    id: PropTypes.string,
-    fade: PropTypes.bool,
-};
+const useStyles = makeStyles(theme => ({
+    root: {
+        width: '100%',
+        '& > * + *': {
+            marginTop: theme.spacing(2),
+        },
+    },
+}));
 
-const defaultProps = {
-    id: 'default-alert',
-    fade: true,
-};
+function LocalAlert(props) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
-function Alert({ id, fade }) {
+export function Alert({ id, fade }) {
     const [alerts, setAlerts] = useState([]);
+
+    const classes = useStyles();
 
     useEffect(() => {
         // subscribe to new alert notifications
@@ -76,42 +82,32 @@ function Alert({ id, fade }) {
     function cssClasses(alert) {
         if (!alert) return '';
 
-        const classes = ['alert', 'alert-dismissable'];
-
         const alertTypeClass = {
-            [AlertType.Success]: 'alert alert-success',
-            [AlertType.Error]: 'alert alert-danger',
-            [AlertType.Info]: 'alert alert-info',
-            [AlertType.Warning]: 'alert alert-warning',
+            [AlertType.Success]: 'success',
+            [AlertType.Error]: 'error',
+            [AlertType.Info]: 'info',
+            [AlertType.Warning]: 'warning',
         };
 
-        classes.push(alertTypeClass[alert.type]);
-
-        if (alert.fade) {
-            classes.push('fade');
-        }
-
-        return classes.join(' ');
+        return alertTypeClass[alert.type];
     }
 
     if (!alerts.length) return null;
 
     return (
-        <div className="container">
-            <div className="m-3">
-                {alerts.map((alert, index) => (
-                    <div key={index} className={cssClasses(alert)}>
-                        <a className="close" onClick={() => removeAlert(alert)}>
-                            &times;
-                        </a>
-                        <span> {alert.message.toString()} </span>
-                    </div>
-                ))}
-            </div>
+        <div className={classes.root}>
+            {alerts.map((alert, index) => (
+                <Snackbar
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                    key={index}
+                    open={true}
+                    onClose={() => removeAlert(alert)}
+                >
+                    <LocalAlert onClose={() => removeAlert(alert)} severity={cssClasses(alert)}>
+                        {alert.message.toString()}
+                    </LocalAlert>
+                </Snackbar>
+            ))}
         </div>
     );
 }
-
-Alert.propTypes = propTypes;
-Alert.defaultProps = defaultProps;
-export { Alert };

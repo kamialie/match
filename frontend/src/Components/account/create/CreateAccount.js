@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { Box, IconButton, LinearProgress, Paper, Tooltip, Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 import ArrowBackIosOutlinedIcon from '@material-ui/icons/ArrowBackIosOutlined';
-import { Names } from './steps/Names';
-import { EmailAndUsername } from './steps/EmailAndUsername';
-import { Password } from './steps/Password';
-import { RegisterResult } from './steps/RegisterResult';
+import { makeStyles } from '@material-ui/core/styles';
 import { MainContainer } from '../../common/MainContainer';
+import { Box, IconButton, LinearProgress, Paper, Tooltip, Typography } from '@material-ui/core';
+import { Birthday } from './steps/Birthday';
+import { Gender } from './steps/Gender';
+import { Country } from './steps/Country';
+import { Biography } from './steps/Biography';
+import { Images } from './steps/Images';
+import { CreateResult } from './steps/CreateResult';
+import { SexualPreferences } from './steps/SexualPreferences';
+import { Interests } from './steps/Interests';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -37,12 +40,12 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-export const Register = () => {
+export const CreateAccount = () => {
     const [data, setData] = useState({});
     const [step, setStep] = useState(1);
-    const history = useHistory();
     const classes = useStyles();
-    const stepCount = 4;
+
+    const stepCount = 8;
 
     const setValues = values => {
         setData(prevData => ({
@@ -58,25 +61,33 @@ export const Register = () => {
 
     const onBack = event => {
         event.preventDefault();
-        if (step === 1) {
-            history.push('./');
-        } else {
-            setStep(prevStep => prevStep - 1);
-        }
+        setStep(prevStep => prevStep - 1);
     };
 
     const getComponent = () => {
         if (step === 1) {
-            return <Names data={data} onNext={onNext} />;
+            return <Birthday data={data} onNext={onNext} />;
         }
         if (step === 2) {
-            return <EmailAndUsername data={data} onNext={onNext} />;
+            return <Gender data={data} onNext={onNext} />;
         }
         if (step === 3) {
-            return <Password data={data} onNext={onNext} />;
+            return <SexualPreferences data={data} onNext={onNext} />;
         }
         if (step === 4) {
-            return <RegisterResult data={data} />;
+            return <Interests data={data} onNext={onNext} />;
+        }
+        if (step === 5) {
+            return <Country data={data} onNext={onNext} />;
+        }
+        if (step === 6) {
+            return <Biography data={data} onNext={onNext} />;
+        }
+        if (step === 7) {
+            return <Images data={data} onNext={onNext} />;
+        }
+        if (step === 8) {
+            return <CreateResult data={data} />;
         }
     };
 
@@ -92,21 +103,22 @@ export const Register = () => {
                                 color="primary"
                                 component="span"
                                 className={classes.backButton}
+                                disabled={step === 1}
                                 onClick={event => onBack(event)}
                             >
                                 <ArrowBackIosOutlinedIcon />
                             </IconButton>
                         </Tooltip>
                         <Typography component="h2" variant="h5">
-                            🦄 Registration
+                            🦄 Fill information about you
                         </Typography>
                     </Box>
+                    <LinearProgress
+                        variant="determinate"
+                        className={classes.progressBar}
+                        value={progress(step)}
+                    />
                 </Box>
-                <LinearProgress
-                    variant="determinate"
-                    className={classes.progressBar}
-                    value={progress(step)}
-                />
                 {getComponent()}
             </Paper>
         </MainContainer>

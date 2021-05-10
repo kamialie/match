@@ -1,6 +1,7 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
+import { CircularProgress } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -8,7 +9,7 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-export const PrimaryButton = ({ children, ...props }) => {
+export const PrimaryButton = ({ children, isLoading, ...props }) => {
     const styles = useStyles();
 
     return (
@@ -20,7 +21,7 @@ export const PrimaryButton = ({ children, ...props }) => {
             className={styles.root}
             {...props}
         >
-            {children}
+            {!isLoading ? children : <CircularProgress size={24} />}
         </Button>
     );
 };

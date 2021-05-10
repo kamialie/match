@@ -2,7 +2,7 @@ import React from 'react';
 import { Map, Placemark } from 'react-yandex-maps';
 import { usePosition } from '../../helpers/usePosition';
 
-function MyMap() {
+export const MyMap = () => {
     // https://ip-api.io/
     const { latitude, longitude } = usePosition();
 
@@ -23,6 +23,4 @@ function MyMap() {
             />
         </Map>
     );
-}
-
-export default MyMap;
+};
