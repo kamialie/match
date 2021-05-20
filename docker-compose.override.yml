@@ -6,11 +6,15 @@ services:
     build:
       context: ./backend
       dockerfile: dockerfiles/dev/Dockerfile
+    depends_on:
+      - db
+      - adminer
     environment:
       FLASK_APP: match
+      FLASK_ENV: development
     env_file:
-      - backend/match/.env_dev
-      - backend/match/.env_db_dev
+      - backend/match/.env.dev
+      - backend/match/.env.db_dev
     ports:
       - "5000:5000"
     volumes:
@@ -21,13 +25,16 @@ services:
     build:
       context: ./backend
       dockerfile: dockerfiles/test/Dockerfile
-    entrypoint: ["sleep", "infinity"]
+    depends_on:
+      - db
+      - adminer
+    entrypoint: ["pytest"]
     environment:
       FLASK_APP: match
       FLASK_ENV: development
     env_file:
-      - backend/match/.env_dev
-      - backend/match/.env_db_dev
+      - backend/match/.env.dev
+      - backend/match/.env.db_dev
     networks:
       - backend
     ports:
@@ -49,7 +56,7 @@ services:
   db:
     image: postgres:12
     env_file:
-      - backend/match/.env_db_dev
+      - backend/match/.env.db_dev
     ports:
       - "5432:5432"
     volumes:

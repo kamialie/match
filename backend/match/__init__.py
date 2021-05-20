@@ -13,13 +13,6 @@ def create_app(test_config=None):
     else:
         app.config.from_mapping(test_config)
 
-    # app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-    # app.config['MAIL_PORT'] = 465
-    # app.config['MAIL_USERNAME'] = 'rgyles.school21@gmail.com'
-    # app.config['MAIL_PASSWORD'] = 'sIMPle_one'
-    # app.config['MAIL_USE_TLS'] = False
-    # app.config['MAIL_USE_SSL'] = True
-
     # ensure the instance folder exists
     try:
         os.makedirs(app.instance_path)

@@ -4,8 +4,8 @@ ENV FLASK_APP=match
 ENV FLASK_ENV=development
 
 WORKDIR /app
-COPY requirements_dev.txt ./
-RUN pip install -r requirements_dev.txt
+COPY requirements.txt ./
+RUN pip install -r requirements.txt
 
 ENTRYPOINT flask init-db \
             && flask init-db-contents \
