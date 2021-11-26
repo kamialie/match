@@ -21,7 +21,7 @@ export const Birthday = ({ data, onNext }) => {
                     disableFuture
                     className={classes.dataPicker}
                     openTo="year"
-                    format="dddd d/MM/yyyy"
+                    format="Do MMMM YYYY"
                     label="Pick your birthday"
                     views={['year', 'month', 'date']}
                     value={selectedDate}

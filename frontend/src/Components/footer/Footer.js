@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, Link, Tooltip, Typography } from '@material-ui/core';
+import { Box, Button, Link, Tooltip, Typography, useMediaQuery } from '@material-ui/core';
 
 function Copyright() {
     return (
@@ -23,6 +23,8 @@ export function Footer() {
             github: 'https://github.com/diazometan',
         },
     ];
+
+    const isMobile = useMediaQuery('(max-width:600px)');
 
     return (
         <Box paddingTop={2} paddingBottom={2} textAlign="center">

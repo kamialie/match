@@ -16,18 +16,25 @@ export const accountService = {
     validateResetToken,
     resetPassword,
     update,
+    updateRating,
+    changeLikeStatus,
+    changeBlockStatus,
     delete: _delete,
     updateAvatar,
     user: userSubject.asObservable(),
     get userValue() {
-        return userSubject.value;
+        return userSubject.getValue();
     },
 };
 
 function login(username, password) {
     userSubject.next({
         id: 1,
-        username: 'Kamil',
+        username: 'kamil',
+        firstName: 'Kamil',
+        lastName: 'Aliev',
+        email: 'kamil@hotmail.com',
+        password: password,
         rating: 3.5,
         status: 0,
     });
@@ -96,11 +103,35 @@ function update(id, params) {
 
     if (id === userSubject.value.id) {
         // publish updated user to subscribers
-        const user = { ...userSubject.value, ...params, status: 1 };
+        const user = { ...userSubject.value, ...params, status: 2 };
         userSubject.next(user);
-        return Promise.resolve();
+        return new Promise(resolve => {
+            setTimeout(() => resolve(), 1000);
+        });
     }
-    return Promise.resolve();
+    return new Promise(resolve => {
+        setTimeout(() => resolve(), 1000);
+    });
+}
+
+function updateRating(id, rating) {
+    const user = { ...userSubject.value, ...rating };
+    userSubject.next(user);
+    return new Promise(resolve => {
+        setTimeout(() => resolve(), 1000);
+    });
+}
+
+function changeLikeStatus(id, status) {
+    return new Promise(resolve => {
+        setTimeout(() => resolve(), 1000);
+    });
+}
+
+function changeBlockStatus(id, status) {
+    return new Promise(resolve => {
+        setTimeout(() => resolve(), 1000);
+    });
 }
 
 function _delete(id) {

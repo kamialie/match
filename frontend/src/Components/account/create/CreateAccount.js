@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
         padding: '2rem',
         borderRadius: '1rem',
         width: '100%',
-        minHeight: '320px',
+        minHeight: '400px',
     },
     backButton: {
         marginLeft: '-2rem',

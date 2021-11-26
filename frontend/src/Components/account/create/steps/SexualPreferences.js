@@ -13,7 +13,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export const SexualPreferences = ({ data, onNext }) => {
-    const [value, setValue] = useState(data.sexualPreferences ? data.sexualPreferences : 'woman');
+    const [value, setValue] = useState(data.sexualPreferences ? data.sexualPreferences : 'both');
     const classes = useStyles();
 
     const handleChange = event => {

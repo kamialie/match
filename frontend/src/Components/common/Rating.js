@@ -12,14 +12,18 @@ const StyledRating = withStyles({
     },
 })(Rating);
 
-export const CustomRating = ({ rating, readOnly = true }) => {
+export const CustomRating = ({ rating, onRatingChange, readOnly = true }) => {
     return (
-        <StyledRating
-            name="rating"
-            defaultValue={rating}
-            precision={0.5}
-            icon={<FavoriteIcon fontSize="inherit" />}
-            readOnly={readOnly}
-        />
+        <>
+            <p style={{ margin: 0 }}>Rating</p>
+            <StyledRating
+                name="rating"
+                defaultValue={rating}
+                precision={0.5}
+                icon={<FavoriteIcon fontSize="inherit" />}
+                readOnly={readOnly}
+                onChange={(event, newValue) => onRatingChange(newValue)}
+            />
+        </>
     );
 };

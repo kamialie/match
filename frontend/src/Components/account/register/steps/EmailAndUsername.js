@@ -30,7 +30,7 @@ export const EmailAndUsername = ({ data, onNext }) => {
                 <Input
                     ref={register}
                     id="username"
-                    type="email"
+                    type="text"
                     label="Username"
                     name="username"
                     error={!!errors.username}

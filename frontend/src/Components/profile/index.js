@@ -1,10 +1,9 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
-
-import { Update } from './Update';
-import { Details } from './Details';
+import { Redirect, Route, Switch } from 'react-router-dom';
+import { Details } from './main/Details';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box } from '@material-ui/core';
+import Settings from './settings';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -25,8 +24,11 @@ function Profile({ match }) {
     return (
         <Box className={classes.root}>
             <Switch>
-                <Route exact path={path} component={Details} />
-                <Route path={`${path}/update`} component={Update} />
+                <Redirect exact from="/profile" to="/profile/me" />
+                <Route path={`${path}/me`} component={Details} />
+                <Route path={`${path}/settings`} component={Settings} />
+                <Route path={`${path}/settings:type`} component={Settings} />
+                <Route path="/profile/:userId?" component={Details} />
             </Switch>
         </Box>
     );

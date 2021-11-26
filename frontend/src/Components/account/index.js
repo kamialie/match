@@ -11,7 +11,7 @@ function Account({ history, match }) {
 
     useEffect(() => {
         if (accountService.userValue) {
-            history.push('/');
+            history.push('/matches');
         }
     }, []);
 

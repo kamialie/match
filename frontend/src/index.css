@@ -1,9 +1,25 @@
-@import "normalize.css";
+.circle {
+    border-radius: 50%;
+    position: relative;
+    width: calc(100% + 20px);
+    animation: rotating 20s linear infinite;
+    max-width: 70%;
+}
 
-@import "Components/dropzone/dropzone.css";
-@import "Components/mymap/mymap.css";
+.circle:hover {
+    animation-play-state: paused;
+}
 
-a, button {
-    cursor: pointer;
-    text-decoration: none;
+.MuiGrid-grid-xs-4 {
+    flex-grow: 1 !important;
+    max-width: 100% !important;
+}
+
+@keyframes rotating {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(-360deg);
+    }
 }
