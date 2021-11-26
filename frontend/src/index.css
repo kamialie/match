@@ -1,12 +1,25 @@
-@import "Components/profile/details.css";
-@import "Components/dropzone/dropzone.css";
-@import "Components/mymap/mymap.css";
-@import "Components/tooltip/tooltip.css";
-
-a, button {
-    cursor: pointer;
+.circle {
+    border-radius: 50%;
+    position: relative;
+    width: calc(100% + 20px);
+    animation: rotating 20s linear infinite;
+    max-width: 70%;
 }
 
-.app-container {
-    min-height: 320px;
+.circle:hover {
+    animation-play-state: paused;
+}
+
+.MuiGrid-grid-xs-4 {
+    flex-grow: 1 !important;
+    max-width: 100% !important;
+}
+
+@keyframes rotating {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(-360deg);
+    }
 }

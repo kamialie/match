@@ -1,22 +1,37 @@
 import React from 'react';
-import {Route, Switch} from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
+import { Details } from './main/Details';
+import { makeStyles } from '@material-ui/core/styles';
+import { Box } from '@material-ui/core';
+import Settings from './settings';
 
-import {Details} from './Details';
-import {Update} from './Update';
+const useStyles = makeStyles(theme => ({
+    root: {
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '3rem',
+        width: '100%',
+        boxSizing: 'border-box',
+        flexGrow: 1,
+    },
+}));
 
-function Profile({match}) {
-    const {path} = match;
+function Profile({ match }) {
+    const { path } = match;
+
+    const classes = useStyles();
 
     return (
-        <div className='p-4'>
-            <div className='container'>
-                <Switch>
-                    <Route exact path={path} component={Details} />
-                    <Route path={`${path}/update`} component={Update} />
-                </Switch>
-            </div>
-        </div>
+        <Box className={classes.root}>
+            <Switch>
+                <Redirect exact from="/profile" to="/profile/me" />
+                <Route path={`${path}/me`} component={Details} />
+                <Route path={`${path}/settings`} component={Settings} />
+                <Route path={`${path}/settings:type`} component={Settings} />
+                <Route path="/profile/:userId?" component={Details} />
+            </Switch>
+        </Box>
     );
 }
 
-export {Profile};
+export { Profile };

@@ -1,26 +1,26 @@
-import {useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 
 const defaultSettings = {
     enableHighAccuracy: false,
     timeout: Infinity,
-    maximumAge: 0
+    maximumAge: 0,
 };
 
 export const usePosition = (watch = false, settings = defaultSettings) => {
     const [position, setPosition] = useState({});
     const [error, setError] = useState(null);
 
-    const onChange = ({coords, timestamp}) => {
+    const onChange = ({ coords, timestamp }) => {
         setPosition({
             latitude: coords.latitude,
             longitude: coords.longitude,
             accuracy: coords.accuracy,
             speed: coords.speed,
-            timestamp
+            timestamp,
         });
     };
 
-    const onError = (error) => {
+    const onError = error => {
         setError(error.message);
     };
 
@@ -38,11 +38,7 @@ export const usePosition = (watch = false, settings = defaultSettings) => {
         }
 
         return () => watcher && navigator.geolocation.clearWatch(watcher);
-    }, [
-        settings.enableHighAccuracy,
-        settings.timeout,
-        settings.maximumAge,
-    ]);
+    }, [settings.enableHighAccuracy, settings.timeout, settings.maximumAge]);
 
-    return {...position, error};
+    return { ...position, error };
 };

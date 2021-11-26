@@ -1,11 +1,11 @@
 import config from '../config';
-import {fetchWrapper} from './fetchWrapper';
+import { fetchWrapper } from './fetchWrapper';
 
 const baseUrl = `${config.host}/users`;
 
 export const usersService = {
     getAll,
-    getById
+    getById,
 };
 
 function getAll() {
